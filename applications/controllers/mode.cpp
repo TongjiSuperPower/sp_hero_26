@@ -1,0 +1,50 @@
+#include "mode.hpp"
+
+#include "cmsis_os.h"
+#include "data_interfaces/uart/uart_task.hpp"
+global_mode Global_Mode = ZERO_FORCE;
+global_mode Last_Global_Mode = ZERO_FORCE;
+
+//定义底盘状态机
+chassis_mode Chassis_Mode;
+//定义云台状态机
+gimbal_mode Last_Gimbal_Mode;
+gimbal_mode Gimbal_Mode;
+//定义摩擦轮状态机
+fric_mode Fric_Mode;
+fric_mode Last_Fric_Mode;
+//定义射击状态机
+shoot_mode Shoot_Mode;
+shoot_mode Last_Shoot_Mode;
+//定义拨弹轮状态机
+trigger_mode Trigger_Mode;
+//记录反转之前的状态机
+trigger_mode Last_Trigger_Mode;
+
+void global_mode_control()
+{
+//VT03链路
+//定义全局模式
+#ifdef VT03
+  Last_Global_Mode = Global_Mode;
+  if (vt03.mode == sp::VT03Mode::C || !pm02.robot_status.power_management_gimbal_output) {
+    Global_Mode = ZERO_FORCE;
+    return;
+  }
+  if (vt03.mode == sp::VT03Mode::N) Global_Mode = KEYBOARD;
+  if (vt03.mode == sp::VT03Mode::S) Global_Mode = REMOTE;
+#endif
+
+//DT7链路
+//定义全局模式
+#ifdef DT7
+  Last_Global_Mode = Global_Mode;
+  if (
+    remote.sw_r == sp::DBusSwitchMode::DOWN || !pm02.robot_status.power_management_gimbal_output) {
+    Global_Mode = ZERO_FORCE;
+    return;
+  }
+  if (remote.sw_r == sp::DBusSwitchMode::MID) Global_Mode = KEYBOARD;
+  if (remote.sw_r == sp::DBusSwitchMode::UP) Global_Mode = REMOTE;
+#endif
+}

@@ -21,8 +21,6 @@ endif()
 # Set the project name
 set(CMAKE_PROJECT_NAME 2026_HERO)
 
-# Include toolchain file
-include("cmake/gcc-arm-none-eabi.cmake")
 
 # Enable compile command to ease indexing with e.g. clangd
 set(CMAKE_EXPORT_COMPILE_COMMANDS TRUE)
@@ -48,11 +46,51 @@ target_link_directories(${CMAKE_PROJECT_NAME} PRIVATE
 # Add sources to executable
 target_sources(${CMAKE_PROJECT_NAME} PRIVATE
     # Add user sources here
+    applications/io/led_task.cpp
+    applications/data_interfaces/uart/uart_task.cpp
+    applications/io/calibrate_task.cpp
+    applications/plotter_task.cpp
+    applications/io/buzzer_task.cpp
+    applications/io/imu_task.cpp
+    applications/data_interfaces/can/can.cpp
+    applications/data_interfaces/can/can_recv.cpp
+    applications/data_interfaces/uart/uart_task.cpp
+    applications/controllers/chassis_controller/chassis_task.cpp
+    applications/controllers/keys.cpp
+    applications/controllers/detect_task.cpp
+    applications/controllers/control_task.cpp
+    applications/io/calibrate_task.cpp
+    applications/controllers/mode.cpp
+    applications/controllers/chassis_controller/energy_control.cpp
+    applications/controllers/chassis_controller/power_control.cpp
+    applications/controllers/gimbal_controller/gimbal_task.cpp
+    applications/controllers/shoot_controller/shoot_task.cpp
+    sp_middleware/io/led/led.cpp
+    sp_middleware/io/buzzer/buzzer.cpp
+    sp_middleware/io/plotter/plotter.cpp
+    sp_middleware/io/bmi088/bmi088.cpp
+    sp_middleware/tools/mahony/mahony.cpp
+    sp_middleware/tools/low_pass_filter/low_pass_filter.cpp
+    sp_middleware/tools/pid/pid.cpp
+    sp_middleware/tools/math_tools/math_tools.cpp
+    sp_middleware/referee/pm02/pm02.cpp
+    sp_middleware/tools/crc/crc.cpp
+    sp_middleware/io/dbus/dbus.cpp
+    sp_middleware/io/can/can.cpp
+    sp_middleware/motor/rm_motor/rm_motor.cpp
+    sp_middleware/referee/ui/manager.cpp
+    sp_middleware/referee/ui/element.cpp
+    sp_middleware/tools/mecanum/mecanum.cpp
+    sp_middleware/io/adc/adc.cpp
+    sp_middleware/motor/dm_motor/dm_motor.cpp
+    sp_middleware/motor/super_cap/super_cap.cpp
 )
 
 # Add include paths
 target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE
     # Add user defined include paths
+    sp_middleware/
+    applications/
 )
 
 # Add project symbols (macros)

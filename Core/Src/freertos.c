@@ -48,16 +48,17 @@
 
 /* USER CODE END Variables */
 osThreadId defaultTaskHandle;
-osThreadId led_taskHandle;
-osThreadId buzzer_taskHandle;
 osThreadId chassis_taskHandle;
-osThreadId supercap_taskHandle;
-osThreadId referee_taskHandle;
-osThreadId ins_taskHandle;
-osThreadId calibrate_taskHandle;
-osThreadId detect_taskHandle;
+osThreadId led_taskHandle;
+osThreadId uart_taskHandle;
 osThreadId gimbal_taskHandle;
-osThreadId telescope_taskHandle;
+osThreadId imu_taskHandle;
+osThreadId buzzer_taskHandle;
+osThreadId calibrate_taskHandle;
+osThreadId plotter_taskHandle;
+osThreadId control_taskHandle;
+osThreadId detect_taskHandle;
+osThreadId keys_taskHandle;
 
 /* Private function prototypes -----------------------------------------------*/
 /* USER CODE BEGIN FunctionPrototypes */
@@ -65,16 +66,17 @@ osThreadId telescope_taskHandle;
 /* USER CODE END FunctionPrototypes */
 
 void StartDefaultTask(void const * argument);
-void LED_Task(void const * argument);
-void Buzzer_Task(void const * argument);
 void Chassis_Task(void const * argument);
-void SuperCap_Task(void const * argument);
-void Referee_Task(void const * argument);
-void Ins_Task(void const * argument);
-void Calibrate_Task(void const * argument);
-void Detect_Task(void const * argument);
+void LED_Task(void const * argument);
+void UART_Task(void const * argument);
 void Gimbal_Task(void const * argument);
-void Telescope_Task(void const * argument);
+void IMU_task(void const * argument);
+void Buzzer_Task(void const * argument);
+void Calibrate_Task(void const * argument);
+void Plotter_Task(void const * argument);
+void Control_Task(void const * argument);
+void Detect_Task(void const * argument);
+void Keys_Task(void const * argument);
 
 void MX_FREERTOS_Init(void); /* (MISRA C 2004 rule 8.1) */
 
@@ -125,45 +127,49 @@ void MX_FREERTOS_Init(void) {
   osThreadDef(defaultTask, StartDefaultTask, osPriorityNormal, 0, 128);
   defaultTaskHandle = osThreadCreate(osThread(defaultTask), NULL);
 
+  /* definition and creation of chassis_task */
+  osThreadDef(chassis_task, Chassis_Task, osPriorityAboveNormal, 0, 512);
+  chassis_taskHandle = osThreadCreate(osThread(chassis_task), NULL);
+
   /* definition and creation of led_task */
   osThreadDef(led_task, LED_Task, osPriorityLow, 0, 128);
   led_taskHandle = osThreadCreate(osThread(led_task), NULL);
 
-  /* definition and creation of buzzer_task */
-  osThreadDef(buzzer_task, Buzzer_Task, osPriorityLow, 0, 128);
-  buzzer_taskHandle = osThreadCreate(osThread(buzzer_task), NULL);
-
-  /* definition and creation of chassis_task */
-  osThreadDef(chassis_task, Chassis_Task, osPriorityHigh, 0, 512);
-  chassis_taskHandle = osThreadCreate(osThread(chassis_task), NULL);
-
-  /* definition and creation of supercap_task */
-  osThreadDef(supercap_task, SuperCap_Task, osPriorityAboveNormal, 0, 128);
-  supercap_taskHandle = osThreadCreate(osThread(supercap_task), NULL);
-
-  /* definition and creation of referee_task */
-  osThreadDef(referee_task, Referee_Task, osPriorityHigh, 0, 512);
-  referee_taskHandle = osThreadCreate(osThread(referee_task), NULL);
-
-  /* definition and creation of ins_task */
-  osThreadDef(ins_task, Ins_Task, osPriorityHigh, 0, 1024);
-  ins_taskHandle = osThreadCreate(osThread(ins_task), NULL);
-
-  /* definition and creation of calibrate_task */
-  osThreadDef(calibrate_task, Calibrate_Task, osPriorityNormal, 0, 128);
-  calibrate_taskHandle = osThreadCreate(osThread(calibrate_task), NULL);
-
-  /* definition and creation of detect_task */
-  osThreadDef(detect_task, Detect_Task, osPriorityHigh, 0, 128);
-  detect_taskHandle = osThreadCreate(osThread(detect_task), NULL);
+  /* definition and creation of uart_task */
+  osThreadDef(uart_task, UART_Task, osPriorityAboveNormal, 0, 128);
+  uart_taskHandle = osThreadCreate(osThread(uart_task), NULL);
 
   /* definition and creation of gimbal_task */
-  osThreadDef(gimbal_task, Gimbal_Task, osPriorityHigh, 0, 1024);
+  osThreadDef(gimbal_task, Gimbal_Task, osPriorityAboveNormal, 0, 512);
   gimbal_taskHandle = osThreadCreate(osThread(gimbal_task), NULL);
 
-  /* definition and creation of telescope_task */
-  osThreadDef(telescope_task, Telescope_Task, osPriorityAboveNormal, 0, 128);
-  telescope_taskHandle = osThreadCreate(osThread(telescope_task), NULL);
+  /* definition and creation of imu_task */
+  osThreadDef(imu_task, IMU_task, osPriorityHigh, 0, 1024);
+  imu_taskHandle = osThreadCreate(osThread(imu_task), NULL);
+
+  /* definition and creation of buzzer_task */
+  osThreadDef(buzzer_task, Buzzer_Task, osPriorityLow, 0, 256);
+  buzzer_taskHandle = osThreadCreate(osThread(buzzer_task), NULL);
+
+  /* definition and creation of calibrate_task */
+  osThreadDef(calibrate_task, Calibrate_Task, osPriorityBelowNormal, 0, 128);
+  calibrate_taskHandle = osThreadCreate(osThread(calibrate_task), NULL);
+
+  /* definition and creation of plotter_task */
+  osThreadDef(plotter_task, Plotter_Task, osPriorityLow, 0, 128);
+  plotter_taskHandle = osThreadCreate(osThread(plotter_task), NULL);
+
+  /* definition and creation of control_task */
+  osThreadDef(control_task, Control_Task, osPriorityAboveNormal, 0, 1024);
+  control_taskHandle = osThreadCreate(osThread(control_task), NULL);
+
+  /* definition and creation of detect_task */
+  osThreadDef(detect_task, Detect_Task, osPriorityNormal, 0, 128);
+  detect_taskHandle = osThreadCreate(osThread(detect_task), NULL);
+
+  /* definition and creation of keys_task */
+  osThreadDef(keys_task, Keys_Task, osPriorityNormal, 0, 128);
+  keys_taskHandle = osThreadCreate(osThread(keys_task), NULL);
 
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
@@ -189,42 +195,6 @@ void StartDefaultTask(void const * argument)
   /* USER CODE END StartDefaultTask */
 }
 
-/* USER CODE BEGIN Header_LED_Task */
-/**
-* @brief Function implementing the led_task thread.
-* @param argument: Not used
-* @retval None
-*/
-/* USER CODE END Header_LED_Task */
-__weak void LED_Task(void const * argument)
-{
-  /* USER CODE BEGIN LED_Task */
-  /* Infinite loop */
-  for(;;)
-  {
-    osDelay(1);
-  }
-  /* USER CODE END LED_Task */
-}
-
-/* USER CODE BEGIN Header_Buzzer_Task */
-/**
-* @brief Function implementing the buzzer_task thread.
-* @param argument: Not used
-* @retval None
-*/
-/* USER CODE END Header_Buzzer_Task */
-__weak void Buzzer_Task(void const * argument)
-{
-  /* USER CODE BEGIN Buzzer_Task */
-  /* Infinite loop */
-  for(;;)
-  {
-    osDelay(1);
-  }
-  /* USER CODE END Buzzer_Task */
-}
-
 /* USER CODE BEGIN Header_Chassis_Task */
 /**
 * @brief Function implementing the chassis_task thread.
@@ -243,94 +213,40 @@ __weak void Chassis_Task(void const * argument)
   /* USER CODE END Chassis_Task */
 }
 
-/* USER CODE BEGIN Header_SuperCap_Task */
+/* USER CODE BEGIN Header_LED_Task */
 /**
-* @brief Function implementing the supercap_task thread.
+* @brief Function implementing the led_task thread.
 * @param argument: Not used
 * @retval None
 */
-/* USER CODE END Header_SuperCap_Task */
-__weak void SuperCap_Task(void const * argument)
+/* USER CODE END Header_LED_Task */
+__weak void LED_Task(void const * argument)
 {
-  /* USER CODE BEGIN SuperCap_Task */
+  /* USER CODE BEGIN LED_Task */
   /* Infinite loop */
   for(;;)
   {
     osDelay(1);
   }
-  /* USER CODE END SuperCap_Task */
+  /* USER CODE END LED_Task */
 }
 
-/* USER CODE BEGIN Header_Referee_Task */
+/* USER CODE BEGIN Header_UART_Task */
 /**
-* @brief Function implementing the referee_task thread.
+* @brief Function implementing the uart_task thread.
 * @param argument: Not used
 * @retval None
 */
-/* USER CODE END Header_Referee_Task */
-__weak void Referee_Task(void const * argument)
+/* USER CODE END Header_UART_Task */
+__weak void UART_Task(void const * argument)
 {
-  /* USER CODE BEGIN Referee_Task */
+  /* USER CODE BEGIN UART_Task */
   /* Infinite loop */
   for(;;)
   {
     osDelay(1);
   }
-  /* USER CODE END Referee_Task */
-}
-
-/* USER CODE BEGIN Header_Ins_Task */
-/**
-* @brief Function implementing the ins_task thread.
-* @param argument: Not used
-* @retval None
-*/
-/* USER CODE END Header_Ins_Task */
-__weak void Ins_Task(void const * argument)
-{
-  /* USER CODE BEGIN Ins_Task */
-  /* Infinite loop */
-  for(;;)
-  {
-    osDelay(1);
-  }
-  /* USER CODE END Ins_Task */
-}
-
-/* USER CODE BEGIN Header_Calibrate_Task */
-/**
-* @brief Function implementing the calibrate_task thread.
-* @param argument: Not used
-* @retval None
-*/
-/* USER CODE END Header_Calibrate_Task */
-__weak void Calibrate_Task(void const * argument)
-{
-  /* USER CODE BEGIN Calibrate_Task */
-  /* Infinite loop */
-  for(;;)
-  {
-    osDelay(1);
-  }
-  /* USER CODE END Calibrate_Task */
-}
-
-/* USER CODE BEGIN Header_Detect_Task */
-/**
-* @brief Function implementing the detect_task thread.
-* @param argument: Not used
-* @retval None
-*/
-/* USER CODE END Header_Detect_Task */
-__weak void Detect_Task(void const * argument)
-{
-  /* USER CODE BEGIN Detect_Task */
-  /* Infinite loop */
-  for(;;)
-  {
-    osDelay(1);
-  }
-  /* USER CODE END Detect_Task */
+  /* USER CODE END UART_Task */
 }
 
 /* USER CODE BEGIN Header_Gimbal_Task */
@@ -351,22 +267,130 @@ __weak void Gimbal_Task(void const * argument)
   /* USER CODE END Gimbal_Task */
 }
 
-/* USER CODE BEGIN Header_Telescope_Task */
+/* USER CODE BEGIN Header_IMU_task */
 /**
-* @brief Function implementing the telescope_task thread.
+* @brief Function implementing the imu_task thread.
 * @param argument: Not used
 * @retval None
 */
-/* USER CODE END Header_Telescope_Task */
-__weak void Telescope_Task(void const * argument)
+/* USER CODE END Header_IMU_task */
+__weak void IMU_task(void const * argument)
 {
-  /* USER CODE BEGIN Telescope_Task */
+  /* USER CODE BEGIN IMU_task */
   /* Infinite loop */
   for(;;)
   {
     osDelay(1);
   }
-  /* USER CODE END Telescope_Task */
+  /* USER CODE END IMU_task */
+}
+
+/* USER CODE BEGIN Header_Buzzer_Task */
+/**
+* @brief Function implementing the buzzer_task thread.
+* @param argument: Not used
+* @retval None
+*/
+/* USER CODE END Header_Buzzer_Task */
+__weak void Buzzer_Task(void const * argument)
+{
+  /* USER CODE BEGIN Buzzer_Task */
+  /* Infinite loop */
+  for(;;)
+  {
+    osDelay(1);
+  }
+  /* USER CODE END Buzzer_Task */
+}
+
+/* USER CODE BEGIN Header_Calibrate_Task */
+/**
+* @brief Function implementing the calibrate_task thread.
+* @param argument: Not used
+* @retval None
+*/
+/* USER CODE END Header_Calibrate_Task */
+__weak void Calibrate_Task(void const * argument)
+{
+  /* USER CODE BEGIN Calibrate_Task */
+  /* Infinite loop */
+  for(;;)
+  {
+    osDelay(1);
+  }
+  /* USER CODE END Calibrate_Task */
+}
+
+/* USER CODE BEGIN Header_Plotter_Task */
+/**
+* @brief Function implementing the plotter_task thread.
+* @param argument: Not used
+* @retval None
+*/
+/* USER CODE END Header_Plotter_Task */
+__weak void Plotter_Task(void const * argument)
+{
+  /* USER CODE BEGIN Plotter_Task */
+  /* Infinite loop */
+  for(;;)
+  {
+    osDelay(1);
+  }
+  /* USER CODE END Plotter_Task */
+}
+
+/* USER CODE BEGIN Header_Control_Task */
+/**
+* @brief Function implementing the control_task thread.
+* @param argument: Not used
+* @retval None
+*/
+/* USER CODE END Header_Control_Task */
+__weak void Control_Task(void const * argument)
+{
+  /* USER CODE BEGIN Control_Task */
+  /* Infinite loop */
+  for(;;)
+  {
+    osDelay(1);
+  }
+  /* USER CODE END Control_Task */
+}
+
+/* USER CODE BEGIN Header_Detect_Task */
+/**
+* @brief Function implementing the detect_task thread.
+* @param argument: Not used
+* @retval None
+*/
+/* USER CODE END Header_Detect_Task */
+__weak void Detect_Task(void const * argument)
+{
+  /* USER CODE BEGIN Detect_Task */
+  /* Infinite loop */
+  for(;;)
+  {
+    osDelay(1);
+  }
+  /* USER CODE END Detect_Task */
+}
+
+/* USER CODE BEGIN Header_Keys_Task */
+/**
+* @brief Function implementing the keys_task thread.
+* @param argument: Not used
+* @retval None
+*/
+/* USER CODE END Header_Keys_Task */
+__weak void Keys_Task(void const * argument)
+{
+  /* USER CODE BEGIN Keys_Task */
+  /* Infinite loop */
+  for(;;)
+  {
+    osDelay(1);
+  }
+  /* USER CODE END Keys_Task */
 }
 
 /* Private application code --------------------------------------------------*/
