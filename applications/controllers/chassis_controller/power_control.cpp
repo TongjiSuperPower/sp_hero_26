@@ -21,8 +21,11 @@ void chassis_power_control(
   Wheel_Torque * Data1, Wheel_Speed * Data2, Wheel_Speed * Data3, float P_max)
 {
   auto stamp_ms = osKernelSysTick();  // 获取当前的系统时间戳（以毫秒为单位）
+  //pid算出来的电机扭矩  
   float wheel_give_torque[4] = {Data1->lf, Data1->lr, Data1->rf, Data1->rr};
+  //电机的实际速度
   float wheel_speed[4] = {Data2->lf, Data2->lr, Data2->rf, Data2->rr};
+  //电机的目标速度
   float wheel_target_speed[4] = {Data3->lf, Data3->lr, Data3->rf, Data3->rr};
 
   //所需总功率
@@ -34,7 +37,7 @@ void chassis_power_control(
   //判断各轮电机与目标转速衰减率
   float K_damping[4] = {1.0f, 1.0f, 1.0f, 1.0f};
   float K_damping_max = 0.0f;
-  //所有电机按照最大速度衰减率缩放后的速度
+  //各个电机按照最大速度衰减率缩放后的目标速度
   float wheel_speed_damping[4] = {1.0f, 1.0f, 1.0f, 1.0f};
 
   //单个轮电机所需功率
@@ -75,7 +78,7 @@ void chassis_power_control(
       wheel_speed_error[i] = fabs(wheel_speed[i] - wheel_speed_damping[i]);
       sum_cmd_power += cmd_power[i];
       if (float_equal(cmd_power[i], 0.0f) || cmd_power[i] < 0.0f) {
-        allocatable_power += -cmd_power[i]; //动能回收？
+        allocatable_power += -cmd_power[i]; //动能回收
       }
       else {
         sum_wheel_error += wheel_speed_error[i];

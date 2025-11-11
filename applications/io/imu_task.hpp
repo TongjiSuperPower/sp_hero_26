@@ -6,6 +6,8 @@
 #include "tools/low_pass_filter/low_pass_filter.hpp"
 #include "tools/mahony/mahony.hpp"
 #include "tools/pid/pid.hpp"
+#include "stdint.h"
+#include "io/vision/vision.hpp"
 
 extern sp::BMI088 bmi088;
 extern sp::Mahony imu;
@@ -37,6 +39,10 @@ constexpr float GyroXZero = -0.0062657f;
 constexpr float GyroYZero = -0.0010400f;
 constexpr float GyroZZero = -0.0008904f;
 
+#endif
+
+#ifdef MPC
+inline sp::Vision vis;
 #endif
 
 // -------------------- 对外接口 --------------------

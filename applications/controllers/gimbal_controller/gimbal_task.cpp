@@ -84,8 +84,8 @@ extern "C" void Gimbal_Task()
 void gimbal_init()
 {
 #ifdef HERO_DOG
-  yaw_offecd_ecd_angle = 2.89806986f;
-  // pitch_offecd_ecd_angle = 0.0f;
+  yaw_offecd_ecd_angle = -0.53349f;
+  pitch_offecd_ecd_angle = 0.62146f;
 #endif
 #ifdef HERO_THREE_WHEELS
   yaw_offecd_ecd_angle = 2.3814f;
@@ -145,7 +145,7 @@ void gimbal_mode_control()
 void gimbal_cmd()
 {
   yaw_relative_angle = sp::limit_angle(yaw_motor.angle - yaw_offecd_ecd_angle);
-  // pitch_relative_angle = sp::limit_angle(pitch_motor.angle - pitch_offecd_ecd_angle);
+  pitch_relative_angle = sp::limit_angle(pitch_motor.angle - pitch_offecd_ecd_angle);
   pitch_relative_angle_filter.update(pitch_relative_angle);
   pitch_relative_angle = pitch_relative_angle_filter.out;
 
@@ -154,7 +154,7 @@ void gimbal_cmd()
     //遥控器
     if (Global_Mode == REMOTE) {
       gyro_yaw_angle_add = -remote_yaw * W_MAX;
-      gyro_pitch_angle_add = -remote_pitch * W_MAX;
+      gyro_pitch_angle_add = remote_pitch * W_MAX;
       yaw_target_angle = sp::limit_angle(yaw_target_angle + gyro_yaw_angle_add);
       pitch_target_angle = sp::limit_angle(pitch_target_angle + gyro_pitch_angle_add);
       //pitch轴限角

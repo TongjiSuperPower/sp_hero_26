@@ -13,3 +13,35 @@ void chassis_send()
   wheel_rr.write(can2.tx_data);
   can2.send(wheel_lf.tx_id);
 }
+
+//摩擦轮和拨弹轮 CAN1（3个）
+void fric_send()
+{
+  fric_motor1.write(can1.tx_data);
+  fric_motor2.write(can1.tx_data);
+  fric_motor3.write(can1.tx_data);
+  fric_motor4.write(can1.tx_data);
+  can1.send(fric_motor1.tx_id);
+}
+
+void trigger_send()
+{
+  trigger_motor.write(can2.tx_data);
+  can2.send(trigger_motor.tx_id);
+}
+
+//yaw CAN2（1个）
+void yaw_send()
+{
+  yaw_motor.write(can2.tx_data);
+  can2.send(yaw_motor.tx_id);
+}
+
+//pitch CAN1（1个）
+void pitch_send()
+{
+  pitch_motor.write(can1.tx_data);
+  can1.send_ext(
+    pitch_motor.communication_type, pitch_motor.tar_torque, pitch_motor.motor_id,
+    pitch_motor.master_id);
+}

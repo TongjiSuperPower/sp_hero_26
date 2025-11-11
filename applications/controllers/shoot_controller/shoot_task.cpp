@@ -253,7 +253,7 @@ void trigger_mode_control(void)
 //摩擦轮目标速度设置与调整
 void fric_cmd(void)
 {
-  float speed = (fabs(fric_motor1.speed) + fabs(fric_motor2.speed)) / 3;
+  float speed = (fabs(fric_motor1.speed) + fabs(fric_motor2.speed)) / 2.0f;
   //摩擦轮转速正常（从down切换到on到转速稳定了;变目标速度稳定之后再打弹）
   if (!fric_speed_normal_flag && fric_target_speed != 0) {
     if (fabs(speed - fric_target_speed) < 2.0f) {
@@ -274,9 +274,9 @@ void fric_cmd(void)
     if (Last_Fric_Mode != FRIC_ON) {
       fric_target_speed = fric_on_speed;
     }
-    //最高射速限制17：超射速摩擦轮自动降速
-    if ((initial_speed != last_initial_speed) && pm02.shoot.initial_speed > 17.0f && key_shoot) {
-      fric_target_speed -= 40.0f;
+    //最高射速限制12：超射速摩擦轮自动降速
+    if ((initial_speed != last_initial_speed) && pm02.shoot.initial_speed > 12.0f && key_shoot) {
+      fric_target_speed -= 20.0f;
       fric_target_change_flag = false;
     }
     //操作手手动调整摩擦轮转速
@@ -295,7 +295,7 @@ void fric_cmd(void)
         fric_target_speed = fric_on_speed;
       }
     }
-    fric_target_speed = sp::limit_min_max(fric_target_speed, 400.0f, 1000.0f);
+    // fric_target_speed = sp::limit_min_max(fric_target_speed, 300.0f, 600.0f);
     Last_Fric_Mode = FRIC_ON;
   }
   if (Fric_Mode == FRIC_OFF) {
@@ -343,7 +343,7 @@ void shoot_init_cmd(void)
     shoot_init_state_flag = false;
     trigger_block_flag = false;
     //保证进入单发之后的连续性（保证single_shoot_over_flag判断上一发（单发连发均可判断）是否射击完成）
-    trigger_target_angle = trigger_motor.angle;
+    // trigger_target_angle = trigger_motor.angle;
   }
 }
 
@@ -379,14 +379,15 @@ void shoot_single_permission(void)
 
   //SHOOT_READY_SINGLE射击条件：摩擦轮开+冷却结束+左拨杆下档/左键
   if (Global_Mode == REMOTE) {
-    if (Fric_Mode == FRIC_ON && remote_shoot && single_shoot_cold_time == 0 && heat_remain > 125.0f) {
+    if (Fric_Mode == FRIC_ON && remote_shoot && single_shoot_cold_time == 0 && heat_remain > 0.0f) {
+      trigger_target_angle = trigger_motor.angle - SHOOT_ANGLE_ADD;
       single_shoot_cold_time = SHOOT_COLD_TIME;
       single_shoot_over_flag = false;
     }
   }
   if (Global_Mode == KEYBOARD) {
-    if (Fric_Mode == FRIC_ON && key_shoot && single_shoot_cold_time == 0 && heat_remain > 125.0f) {
-      trigger_target_angle = trigger_motor.angle + SHOOT_ANGLE_ADD;
+    if (Fric_Mode == FRIC_ON && key_shoot && single_shoot_cold_time == 0 && heat_remain > 0.0f) {
+      trigger_target_angle = trigger_motor.angle - SHOOT_ANGLE_ADD;
       single_shoot_cold_time = SHOOT_COLD_TIME;
       single_shoot_over_flag = false;
     }

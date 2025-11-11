@@ -85,6 +85,8 @@ target_sources(${CMAKE_PROJECT_NAME} PRIVATE
     sp_middleware/motor/dm_motor/dm_motor.cpp
     sp_middleware/motor/super_cap/super_cap.cpp
     sp_middleware/motor/cybergear_motor/cybergear_motor.cpp
+    sp_middleware/io/vision/vision.cpp
+    sp_middleware/referee/vt03/vt03.cpp
 )
 
 # Add include paths

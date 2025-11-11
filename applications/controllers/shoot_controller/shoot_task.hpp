@@ -9,7 +9,7 @@
 constexpr float T_SHOOT = 1e-3f;  // 控制周期, 单位: s
 //摩擦轮转速rad/s
 #ifdef HERO_DOG
-constexpr float FRIC_SPEED = 390.0f;
+constexpr float FRIC_SPEED = 100.0f;
 #endif
 
 #ifdef HERO_THREE_WHEELS
@@ -36,7 +36,7 @@ constexpr float FRIC_SPEED_REDUCE = 17.0f;
 #endif
 //双发检测持续时间
 constexpr uint16_t DETECT_TIME = 500;
-constexpr float HEAT_PER_SHOT = 40.0f;
+constexpr float HEAT_PER_SHOT = 100.0f;
 
 // -------------------- 对外硬件 --------------------
 inline sp::RM_Motor trigger_motor(5, sp::RM_Motors::M3508, RADUCTION_RATIO);

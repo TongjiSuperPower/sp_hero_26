@@ -16,8 +16,8 @@ constexpr float T_GIMBAL = 1e-3;
 //遥控器模式云台数据
 constexpr float W_MAX = 0.004f;  //rad/ms
 
-constexpr float IMU_PITCH_ANGLE_MAX = 0.35f;   //Pitch轴限位    最大角度0.54
-constexpr float IMU_PITCH_ANGLE_MIN = -0.50f;  //Pitch轴限位    最小角度-0.49
+constexpr float IMU_PITCH_ANGLE_MAX = 0.50f;   //Pitch轴限位    最大角度0.50
+constexpr float IMU_PITCH_ANGLE_MIN = -0.25f;  //Pitch轴限位    最小角度-0.25
 #endif
 
 #ifdef HERO_THREE_WHEELS
@@ -36,7 +36,7 @@ constexpr float TURNOVER_COLDTIME = 800;  //ms
 //重力补偿
 // 云台平衡力矩系数N.M
 #ifdef HERO_DOG
-constexpr float TOR_PARAM = 1.6575f;
+constexpr float TOR_PARAM = 1.1f;
 // 重心偏角
 constexpr float OFFSET_ANGLE = 0.0f;  // rad
 #endif
@@ -47,7 +47,7 @@ constexpr float OFFSET_ANGLE = 0.0f;  // rad
 #endif
 
 // -------------------- 对外硬件 --------------------
-inline sp::DM_Motor yaw_motor(0x09, 0x19, 3.141593f, 30.0f, 10.0f);
+inline sp::DM_Motor yaw_motor(0x08, 0x04, 3.141593f, 30.0f, 10.0f);
 inline sp::CyberGear_Motor pitch_motor(Master_CAN_ID, CyberGear_CAN_ID, CYBERGEAR_MAX_POSITION, CYBERGEAR_MAX_SPEED, CYBERGEAR_MAX_TORQUE);
 
 // -------------------- 对外调试 --------------------

@@ -62,6 +62,7 @@ extern "C" void Detect_Task()
     trigger_block_flag = trigger_motor_block();
     //电机掉线检测
     motor_dead();
+    osDelay(10);
   }
 }
 

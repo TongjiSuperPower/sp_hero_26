@@ -219,6 +219,7 @@ void chassis_mode_control()
       }
     }
 #endif
+
   }
 }
 
@@ -235,6 +236,7 @@ void remote_speedcontrol_follow(void)
   yaw_relative_angle_filter.update(yaw_relative_angle);
   yaw_relative_angle = yaw_relative_angle_filter.out;
   chassis_follow_wz_pid.calc(0.0f, yaw_relative_angle); //底盘跟随：设为底盘与yaw轴相对角度为0
+  // chassis_follow_wz_pid.calc(0.0f, 0); //关闭底盘跟随
   chassis_speed.wz = -chassis_follow_wz_pid.out;
 }
 
@@ -276,6 +278,7 @@ void keyboard_speedcontrol_follow(bool key)
   yaw_relative_angle_filter.update(yaw_relative_angle);
   yaw_relative_angle = yaw_relative_angle_filter.out;
   chassis_follow_wz_pid.calc(0.0f, yaw_relative_angle);
+  // chassis_follow_wz_pid.calc(0.0f, 0);
   chassis_speed.wz = -chassis_follow_wz_pid.out;
   chassis_follow_wz_filter.update(chassis_speed.wz);
   chassis_speed.wz = chassis_follow_wz_filter.out;

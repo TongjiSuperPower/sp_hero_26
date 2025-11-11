@@ -29,6 +29,7 @@ typedef enum
   GIMBAL_INIT,        //初始化回中
   GIMBAL_GYRO,        //非自瞄状态下陀螺仪控制
   GIMBAL_AUTO,        //自瞄状态下陀螺仪控制
+  GIMBAL_LOB,         //吊射模式
 } gimbal_mode;
 
 //摩擦轮状态机：只有在左拨杆在中挡时允许切换，向上拨动一次即可切换摩擦轮状态
