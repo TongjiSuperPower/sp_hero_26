@@ -311,30 +311,30 @@ void gimbal_autoaim_control()
   pitch_motor.cmd(-pitch_autoaim_speed_pid.out + cos(-OFFSET_ANGLE + imu.pitch) * Tor_param);
 #endif
 #ifdef MPC
-  // if (!vis.control) {
-  //   gimbal_gyro_control();
-  //   return;
-  // }
-  // yaw_acc_pid.calc(yaw_target_angle, imu.yaw, vis.yaw_vel, imu.vyaw);
-  // auto yaw_motor_speed = imu.vyaw;
-  // auto yaw_torque = YAW_INERTIA * (vis.yaw_acc + yaw_acc_pid.out) +
-  //                   YAW_DAMPING_COEFF * yaw_motor_speed +
-  //                   (yaw_motor_speed > 0 ? 1.0f : -1.0f) * YAW_COULOMB_FORCE;
-  // yaw_spin_compensation_pid.calc(-chassis_wz_filter, 0.0f);
-  // if (yaw_torque > MAX_4310_TROQUE) {
-  //   yaw_cmd_torque = sp::limit_max(yaw_torque, MAX_4310_TROQUE);
-  // }
-  // else {
-  //   yaw_cmd_torque = sp::limit_max(yaw_torque + yaw_spin_compensation_pid.out, MAX_4310_TROQUE);
-  // }
-  // yaw_motor.cmd(yaw_cmd_torque);
+  if (!vis.control) {
+    gimbal_gyro_control();
+    return;
+  }
+  yaw_acc_pid.calc(yaw_target_angle, imu.yaw, vis.yaw_vel, imu.vyaw);
+  auto yaw_motor_speed = imu.vyaw;
+  auto yaw_torque = YAW_INERTIA * (vis.yaw_acc + yaw_acc_pid.out) +
+                    YAW_DAMPING_COEFF * yaw_motor_speed +
+                    (yaw_motor_speed > 0 ? 1.0f : -1.0f) * YAW_COULOMB_FORCE;
+  yaw_spin_compensation_pid.calc(-chassis_wz_filter, 0.0f);
+  if (yaw_torque > MAX_4310_TORQUE) {
+    yaw_cmd_torque = sp::limit_max(yaw_torque, MAX_4310_TORQUE);
+  }
+  else {
+    yaw_cmd_torque = sp::limit_max(yaw_torque + yaw_spin_compensation_pid.out, MAX_4310_TORQUE);
+  }
+  yaw_motor.cmd(yaw_cmd_torque);
 
-  // pitch_acc_pid.calc(pitch_target_angle, imu.pitch, vis.pitch_vel, imu.vpitch);
-  // pitch_torque = PITCH_INERTIA * (vis.pitch_acc + pitch_acc_pid.out) +
-  //                     PITCH_DAMPING_COEFF * imu.vpitch +
-  //                     (imu.vpitch > 0 ? 1.0f : -1.0f) * PITCH_COULOMB_FORCE -
-  //                     std::cos(OFFSET_ANGLE + imu.pitch) * PITCH_GRAVITY_TORQUE;
-  // pitch_motor.cmd(-pitch_torque);
+  pitch_acc_pid.calc(pitch_target_angle, imu.pitch, vis.pitch_vel, imu.vpitch);
+  pitch_torque = PITCH_INERTIA * (vis.pitch_acc + pitch_acc_pid.out) +
+                      PITCH_DAMPING_COEFF * imu.vpitch +
+                      (imu.vpitch > 0 ? 1.0f : -1.0f) * PITCH_COULOMB_FORCE -
+                      std::cos(OFFSET_ANGLE + imu.pitch) * PITCH_GRAVITY_TORQUE;
+  pitch_motor.cmd(pitch_torque);
 #endif
 }
 

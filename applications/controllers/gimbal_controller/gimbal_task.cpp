@@ -171,7 +171,7 @@ void gimbal_cmd()
     if (Global_Mode == KEYBOARD) {
       //陀螺仪控云台
       gyro_yaw_angle_add = -mouse_yaw * MOUSE_DPI;
-      gyro_pitch_angle_add = -mouse_pitch * MOUSE_DPI;
+      gyro_pitch_angle_add = mouse_pitch * MOUSE_DPI;
 
       yaw_target_angle = sp::limit_angle(yaw_target_angle + gyro_yaw_angle_add);
       pitch_target_angle = sp::limit_angle(pitch_target_angle + gyro_pitch_angle_add);
@@ -206,29 +206,20 @@ void gimbal_cmd()
 
   //自瞄控云台
   if (Gimbal_Mode == GIMBAL_AUTO) {
-    //     if (key_small_buff) {
-    //       shoot_mode_flag = 2;  // 小符
-    //     }
-    //     else if (key_big_buff) {
-    //       shoot_mode_flag = 3;  // 大符
-    //     }
-    //     else {
-    //       shoot_mode_flag = 1;  // 普通自瞄
-    //     }
-
-    //     //赋予自瞄坐标
-    //     if (vis.control) {
-    //       yaw_target_angle = vis.yaw;
-    // #ifdef RMUL
-    //       pitch_target_angle = vis.pitch;
-    //       pitch_target_angle =
-    //         sp::limit_min_max(pitch_target_angle, IMU_PITCH_ANGLE_MIN, IMU_PITCH_ANGLE_MAX);
-    // #endif
-    // #ifdef RMUC
-    //       pitch_target_angle = sp::limit_min_max(
-    //         vis.pitch, IMU_PITCH_ANGLE_MIN + slope_angle, IMU_PITCH_ANGLE_MAX + slope_angle);
-    // #endif
-    //     }
+    shoot_mode_flag = 1;  // 普通自瞄
+    //赋予自瞄坐标
+    if (vis.control) {
+      yaw_target_angle = vis.yaw;
+#ifdef RMUL
+      pitch_target_angle = vis.pitch;
+      pitch_target_angle =
+        sp::limit_min_max(pitch_target_angle, IMU_PITCH_ANGLE_MIN, IMU_PITCH_ANGLE_MAX);
+#endif
+#ifdef RMUC
+      pitch_target_angle = sp::limit_min_max(
+        vis.pitch, IMU_PITCH_ANGLE_MIN + slope_angle, IMU_PITCH_ANGLE_MAX + slope_angle);
+#endif
+    }
   }
 
   if (Gimbal_Mode == GIMBAL_INIT) {

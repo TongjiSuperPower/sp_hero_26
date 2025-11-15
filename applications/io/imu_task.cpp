@@ -63,11 +63,13 @@ extern "C" void IMU_task()
 
   while (true) {
 #ifdef MPC
-    vis.send(shoot_mode_flag, imu.q, imu.yaw, imu.vyaw, imu.pitch, imu.vpitch, 12.0f, 0);
+    vis.send(
+      shoot_mode_flag, imu.q, imu.yaw, imu.vyaw, imu.pitch, imu.vpitch, pm02.shoot.initial_speed,
+      0);
 #endif
     imu_temp_control(bmi088.temp);
     bmi088.update();
-    //传感器角速度减去零飘值 
+    //传感器角速度减去零飘值
     ins_gyro[0] = bmi088.gyro[0] - gyro_x_zero;  //roll
     ins_gyro[1] = bmi088.gyro[1] - gyro_y_zero;  //pitch
     ins_gyro[2] = bmi088.gyro[2] - gyro_z_zero;  //yaw

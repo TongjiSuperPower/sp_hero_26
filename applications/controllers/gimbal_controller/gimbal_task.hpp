@@ -36,7 +36,7 @@ constexpr float TURNOVER_COLDTIME = 800;  //ms
 //重力补偿
 // 云台平衡力矩系数N.M
 #ifdef HERO_DOG
-constexpr float TOR_PARAM = 1.1f;
+constexpr float TOR_PARAM = 1.5f;
 // 重心偏角
 constexpr float OFFSET_ANGLE = 0.0f;  // rad
 #endif
