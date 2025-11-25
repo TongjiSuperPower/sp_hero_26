@@ -23,5 +23,9 @@ extern bool low_battery_flag;
 extern float voltage;
 //被墙卡住检测
 extern bool stuck_flag;
+//打弹颗数检测
+extern uint32_t shoot_count;
+extern float fric_speed;
+extern float last_fric_speed;
 
 #endif

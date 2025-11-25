@@ -65,7 +65,7 @@ extern "C" void IMU_task()
 #ifdef MPC
     vis.send(
       shoot_mode_flag, imu.q, imu.yaw, imu.vyaw, imu.pitch, imu.vpitch, pm02.shoot.initial_speed,
-      0);
+      shoot_count);
 #endif
     imu_temp_control(bmi088.temp);
     bmi088.update();

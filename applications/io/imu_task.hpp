@@ -8,6 +8,7 @@
 #include "tools/pid/pid.hpp"
 #include "stdint.h"
 #include "io/vision/vision.hpp"
+#include "controllers/detect_task.hpp"
 
 extern sp::BMI088 bmi088;
 extern sp::Mahony imu;

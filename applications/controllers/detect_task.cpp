@@ -41,6 +41,11 @@ uint8_t reset_count = 50;
 bool stuck_flag = false;
 //被墙卡住检测倒计时
 uint32_t stuck_count = 0;
+//打弹颗数计数
+uint32_t shoot_count = 0;
+float fric_speed;
+float last_fric_speed;
+bool count_flag = true;
 
 //C板重置
 void Cboard_reset(bool key1);
@@ -48,6 +53,8 @@ void Cboard_reset(bool key1);
 bool trigger_motor_block(void);
 //电机掉线检测函数
 void motor_dead();
+// 射击次数计数
+void shoot_count_detect();
 
 extern "C" void Detect_Task()
 {
@@ -62,6 +69,7 @@ extern "C" void Detect_Task()
     trigger_block_flag = trigger_motor_block();
     //电机掉线检测
     motor_dead();
+    shoot_count_detect();
     osDelay(10);
   }
 }
@@ -140,4 +148,19 @@ bool trigger_motor_block(void)
   }
   return false;
 #endif
+}
+
+void shoot_count_detect()
+{
+  last_fric_speed = fric_speed;
+  fric_speed = (-fric_motor1.speed + fric_motor2.speed) / 2.0f;
+  if (Fric_Mode == FRIC_ON) {
+    if (last_fric_speed - fric_speed > 20.0f && count_flag == false) {
+      shoot_count++;
+      count_flag = true;
+    }
+    else {
+      count_flag = false;
+    }
+  }
 }
