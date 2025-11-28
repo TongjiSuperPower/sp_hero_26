@@ -41,8 +41,7 @@ constexpr uint16_t DETECT_TIME = 500;
 constexpr float HEAT_PER_SHOT = 100.0f;
 
 // -------------------- 对外硬件 --------------------
-inline sp::RM_Motor trigger_motor(5, sp::RM_Motors::M3508, RADUCTION_RATIO);
-// inline sp::DM_Motor trigger_motor(0x205, 0x205, 2.0f * 3.1415926f, 100.0f, 20.0f);
+inline sp::DM_Motor trigger_motor(0x01, 0x00, 3.1415926f, 30.0f, 10.0f);
 inline sp::RM_Motor fric_motor1(1, sp::RM_Motors::M3508, 1);
 inline sp::RM_Motor fric_motor2(2, sp::RM_Motors::M3508, 1);
 inline sp::RM_Motor fric_motor3(3, sp::RM_Motors::M3508, 1);

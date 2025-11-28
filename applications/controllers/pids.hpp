@@ -58,13 +58,13 @@ constexpr float TRIGGER_MAX_TORQUE = 1.8f;       // N.m
 inline sp::PID trigger_pos_pid1(T_CONTROL, 16.05f, 6.0f, 0.0f, 10, 0.5, 0.5f, true, true);
 //单发内环PID
 inline sp::PID trigger_speed_pid2(
-  T_CONTROL, 0.53f, 0.0f, 0.002f, TRIGGER_MAX_TORQUE, TRIGGER_MAX_TORQUE, 1, false, true);
+  T_CONTROL, 0.53f, 0.0f, 0.002f, MAX_4310_TORQUE, MAX_4310_TORQUE / 3.0f, 1, false, true);
 
 //反转外环PID
 inline sp::PID triggerback_pos_pid1(T_CONTROL, 40.05f, 3.5f, 0.1f, 10, 10, 1.0f, true, true);
 //反转内环PID
 inline sp::PID triggerback_speed_pid2(
-  T_CONTROL, 0.53f, 0.0f, 0.002f, TRIGGER_MAX_TORQUE, TRIGGER_MAX_TORQUE, 1, false, true);
+  T_CONTROL, 0.53f, 0.0f, 0.002f, MAX_4310_TORQUE, MAX_4310_TORQUE / 3.0f, 1, false, true);
 
 //摩擦轮3508单环速度环PID
 inline sp::PID fricmotor1_pid(T_CONTROL, 0.0032f, 0.0f, 0.000001f, 0.34, 0.1, 0.8);
