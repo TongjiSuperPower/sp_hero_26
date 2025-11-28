@@ -39,8 +39,7 @@ void global_mode_control()
 //定义全局模式
 #ifdef DT7
   Last_Global_Mode = Global_Mode;
-  if (
-    remote.sw_r == sp::DBusSwitchMode::DOWN || !pm02.robot_status.power_management_gimbal_output) {
+  if (remote.sw_r == sp::DBusSwitchMode::DOWN) {
     Global_Mode = ZERO_FORCE;
     return;
   }

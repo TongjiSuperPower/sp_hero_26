@@ -186,7 +186,7 @@ void motor_enable(void)
 //摩擦轮控制
 void fric_control()
 {
-  if (Fric_Mode == FRIC_DOWN || !pm02.robot_status.power_management_shooter_output) {
+  if (Fric_Mode == FRIC_DOWN) {
     fric_motor1.cmd(0.0f);
     fric_motor2.cmd(0.0f);
     fric_motor3.cmd(0.0f);
@@ -201,11 +201,11 @@ void fric_control()
     fricmotor6_pid.data.iout = 0.0f;
     return;
   }
-  fricmotor1_pid.calc(-fric_target_speed, fric_motor1.speed);
-  fricmotor2_pid.calc(fric_target_speed, fric_motor2.speed);
+  fricmotor1_pid.calc(fric_target_speed, fric_motor1.speed);
+  fricmotor2_pid.calc(-fric_target_speed, fric_motor2.speed);
   fricmotor3_pid.calc(fric_target_speed, fric_motor3.speed);
   fricmotor4_pid.calc(fric_target_speed, fric_motor4.speed);
-  fricmotor5_pid.calc(fric_target_speed, fric_motor5.speed);
+  fricmotor5_pid.calc(-fric_target_speed, fric_motor5.speed);
   fricmotor6_pid.calc(fric_target_speed, fric_motor6.speed);
 
   fric_motor1.cmd(fricmotor1_pid.out);
