@@ -22,6 +22,9 @@ void fric_send()
   fric_motor3.write(can1.tx_data);
   fric_motor4.write(can1.tx_data);
   can1.send(fric_motor1.tx_id);
+  fric_motor5.write(can1.tx_data);
+  fric_motor6.write(can1.tx_data);
+  can1.send(fric_motor5.tx_id);
 }
 
 void trigger_send()

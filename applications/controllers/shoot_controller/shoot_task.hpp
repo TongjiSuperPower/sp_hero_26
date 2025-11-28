@@ -47,6 +47,8 @@ inline sp::RM_Motor fric_motor1(1, sp::RM_Motors::M3508, 1);
 inline sp::RM_Motor fric_motor2(2, sp::RM_Motors::M3508, 1);
 inline sp::RM_Motor fric_motor3(3, sp::RM_Motors::M3508, 1);
 inline sp::RM_Motor fric_motor4(4, sp::RM_Motors::M3508, 1);
+inline sp::RM_Motor fric_motor5(5, sp::RM_Motors::M3508, 1);
+inline sp::RM_Motor fric_motor6(6, sp::RM_Motors::M3508, 1);
 
 // -------------------- 对外接口 --------------------
 extern uint8_t shoot_mode_flag;
