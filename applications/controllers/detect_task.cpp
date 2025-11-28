@@ -138,7 +138,8 @@ bool trigger_motor_block(void)
 #ifdef HERO_DOG
   if (trigger_num > 25) {
     trigger_num = 0;
-    return true;
+    return false;
+    // return true;
   }
   return false;
 #endif

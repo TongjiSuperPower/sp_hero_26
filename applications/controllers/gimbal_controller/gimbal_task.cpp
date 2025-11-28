@@ -73,7 +73,7 @@ extern "C" void Gimbal_Task()
     trigger_mode_control();
     //计算摩擦轮目标速度
     fric_cmd();
-    //计算拨弹轮目标速度
+    //计算拨弹轮目标角度
     trigger_cmd();
 
     osDelay(1);

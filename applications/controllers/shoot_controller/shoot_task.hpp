@@ -23,10 +23,12 @@ constexpr float FRIC_SPEED = 670.0f;  //23.5度 21.5射速
 constexpr float TRIGGER_BACK_ANGLE = 0.6f;  //rad
 //拨弹轮双发反转角度
 constexpr float TRIGGER_SINGLE_BACK_ANGLE = 0.4f;  //rad
+//拨弹轮复位角度
+constexpr float TRIGGER_INIT_ANGLE = 0.0f;  //rad
 
 // -------------------- SHOOT_READY_SINGLE相关 --------------------
 //每次射击冷却时间
-constexpr uint16_t SHOOT_COLD_TIME = 500;  //ms
+constexpr uint16_t SHOOT_COLD_TIME = 150;  //ms
 //每次射击拨弹轮旋转角度
 constexpr float SHOOT_ANGLE_ADD = 1.0472f;  //rad  3.1415926*2/6=1.0472
 //双发判断一次射击摩擦轮降速阈值
