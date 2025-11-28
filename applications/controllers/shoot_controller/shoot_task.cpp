@@ -32,6 +32,10 @@ uint32_t shoot_error_time = 0;
 bool fric_target_change_flag = false;
 //射速调控按键按下计数器
 uint16_t fric_target_change_count = 500;
+//拨弹轮工作位置
+float trigger_work_position[6];
+//开摩擦轮后第一次射击
+bool first_shoot = false;
 
 // -------------------- 状态机与射击标识符相关 --------------------
 extern gimbal_mode Gimbal_Mode;
@@ -76,6 +80,9 @@ void shoot_mode_init(void)
   Fric_Mode = FRIC_DOWN;
   Trigger_Mode = SHOOT_READY_SINGLE;
   fric_target_speed = FRIC_SPEED;
+  for (int i = 0; i < 6; i++) {
+    trigger_work_position[i] = sp::limit_angle(TRIGGER_INIT_ANGLE + i * sp::PI / 3);
+  }
 }
 
 void fric_mode_control(void)
@@ -91,6 +98,7 @@ void fric_mode_control(void)
     if (vt03.fn_l && !last_remote_fn_l) {
       if (Fric_Mode == FRIC_DOWN || Fric_Mode == FRIC_OFF) {
         Fric_Mode = FRIC_ON;
+        first_shoot = true;
       }
       else {
         Fric_Mode = FRIC_OFF;
@@ -113,6 +121,8 @@ void fric_mode_control(void)
     if (remote.sw_l == sp::DBusSwitchMode::UP && !last_fric_flag) {
       if (Fric_Mode == FRIC_DOWN || Fric_Mode == FRIC_OFF) {
         Fric_Mode = FRIC_ON;
+        first_shoot = true;
+        trigger_target_angle = trigger_motor.angle;
       }
       else {
         Fric_Mode = FRIC_OFF;
@@ -347,6 +357,21 @@ void shoot_init_cmd(void)
   }
 }
 
+//计算负方向离拨盘最近的工作位置
+float trigger_near_work_position(void)
+{
+  float min_distance = sp::PI / 3;
+  float target_position = trigger_motor.angle;
+  for (int i = 0; i < 6; i++) {
+    float distance = trigger_motor.angle - trigger_work_position[i];
+    if (distance >= 0.0f && distance <= min_distance) {
+      target_position = trigger_work_position[i];
+      break;
+    }
+  }
+  return target_position;
+}
+
 //permission——>赋值目标+重置冷却——>射击——>冷却——>permission
 //SHOOT_SINGLE_READY下允许射击标识符+目标角度
 void shoot_single_permission(void)
@@ -380,7 +405,13 @@ void shoot_single_permission(void)
   //SHOOT_READY_SINGLE射击条件：摩擦轮开+冷却结束+左拨杆下档/左键
   if (Global_Mode == REMOTE) {
     if (Fric_Mode == FRIC_ON && remote_shoot && single_shoot_cold_time == 0 && heat_remain > 0.0f) {
-      trigger_target_angle = trigger_motor.angle - SHOOT_ANGLE_ADD;
+      if (first_shoot == true) {
+        trigger_target_angle = trigger_near_work_position();
+        first_shoot = false;
+      }
+      else {
+        trigger_target_angle = sp::limit_angle(trigger_target_angle - sp::PI / 3);
+      }
       single_shoot_cold_time = SHOOT_COLD_TIME;
       single_shoot_over_flag = false;
     }
@@ -390,7 +421,13 @@ void shoot_single_permission(void)
       Fric_Mode == FRIC_ON &&
       (key_shoot || (vis.fire && vis.control && Gimbal_Mode == GIMBAL_AUTO)) &&
       single_shoot_cold_time == 0 && heat_remain > 0.0f) {
-      trigger_target_angle = trigger_motor.angle - SHOOT_ANGLE_ADD;
+      if (first_shoot == true) {
+        trigger_target_angle = trigger_near_work_position();
+        first_shoot = false;
+      }
+      else {
+        trigger_target_angle = sp::limit_angle(trigger_target_angle - sp::PI / 3);
+      }
       single_shoot_cold_time = SHOOT_COLD_TIME;
       single_shoot_over_flag = false;
     }

@@ -55,7 +55,7 @@ typedef enum
   SHOOT_DOWN,          //拨弹轮失力状态
   SHOOT_READY_SINGLE,  //拨弹轮单发模式，双环
   SHOOT_CLEAR,         //拨弹轮连发，赛后清弹(不需热量控制)
-  SHOOT_INIT,          //堵转后自动进入回转模式，使拨弹轮回转一定角度
+  SHOOT_INIT,          //拨弹轮复位
 } trigger_mode;
 
 // -------------------- 对外接口 --------------------

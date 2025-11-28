@@ -9,6 +9,7 @@ extern uint16_t trigger_num;
 //电机掉线检测
 extern bool motor_alive;
 extern bool yaw_motor_alive;
+extern bool trigger_motor_alive;
 extern bool pitch_motor_alive;
 extern bool fric_motor_alive;
 extern bool chassis_alive;

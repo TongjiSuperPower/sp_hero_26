@@ -21,6 +21,7 @@ bool trigger_block_flag = false;
 //电机掉线检测
 bool motor_alive = true;
 bool yaw_motor_alive = true;
+bool trigger_motor_alive = true;
 bool pitch_motor_alive = false;
 bool fric_motor_alive = true;
 bool chassis_alive = true;
@@ -93,6 +94,7 @@ void motor_dead()
 {
   auto stamp_ms = osKernelSysTick();  // 获取当前的系统时间戳（以毫秒为单位）
   yaw_motor_alive = yaw_motor.is_alive(stamp_ms);
+  trigger_motor_alive = trigger_motor.is_alive(stamp_ms);
   pitch_motor_alive = pitch_motor.is_alive(stamp_ms);
   if (pm02.robot_status.power_management_shooter_output) {
     fric_motor_alive = fric_motor1.is_alive(stamp_ms) && fric_motor2.is_alive(stamp_ms);
@@ -144,7 +146,8 @@ bool trigger_motor_block(void)
 #ifdef HERO_DOG
   if (trigger_num > 25) {
     trigger_num = 0;
-    return true;
+    return false;
+    // return true;
   }
   return false;
 #endif

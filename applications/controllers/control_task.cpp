@@ -21,6 +21,7 @@ uint16_t shoot_mode_send_num = 0;
 uint16_t q_send_num = 0;
 //达妙使能帧控制符
 uint16_t yaw_enable_num = 0;
+uint16_t trigger_enable_num = 0;
 uint16_t pitch_enable_num = 0;
 
 float pitch_torque;
@@ -55,6 +56,8 @@ extern "C" void Control_Task()
   can2.start();
   yaw_motor.write_enable(can2.tx_data);
   can2.send(yaw_motor.tx_id);
+  trigger_motor.write_enable(can2.tx_data);
+  can2.send(trigger_motor.tx_id);
   pitch_init();
 
   while (1) {
@@ -63,11 +66,6 @@ extern "C" void Control_Task()
 
     // 失能检测,发送使能帧
     motor_enable();
-    // pitch_motor.cmd_get_id();
-    // pitch_motor.cmd_motor_enable();  //电机使能
-    // // pitch_motor.cmd(0);
-    // pitch_motor.write(can1.tx_data);
-    // can1.send_ext(pitch_motor.communication_type, 0, pitch_motor.motor_id, pitch_motor.master_id);
 
     // yaw
     // 清除错误帧
@@ -76,6 +74,12 @@ extern "C" void Control_Task()
       can2.send(yaw_motor.tx_id);
       yaw_motor.write_enable(can2.tx_data);
       can2.send(yaw_motor.tx_id);
+    }
+    if (trigger_motor.error != 1 && trigger_motor.error != 0) {
+      trigger_motor.write_clear_error(can2.tx_data);
+      can2.send(trigger_motor.tx_id);
+      trigger_motor.write_enable(can2.tx_data);
+      can2.send(trigger_motor.tx_id);
     }
 
     //底盘控制
@@ -162,6 +166,10 @@ void motor_enable(void)
     yaw_motor.write_enable(can2.tx_data);
     can2.send(yaw_motor.tx_id);
   }
+  if (trigger_motor.error == 0) {
+    trigger_motor.write_enable(can2.tx_data);
+    can2.send(trigger_motor.tx_id);
+  }
   if (pitch_motor.error != 0) {
     pitch_init();
   }
@@ -172,6 +180,14 @@ void motor_enable(void)
       yaw_enable_num = 0;
     }
     yaw_enable_num++;
+  }
+  if (!trigger_motor_alive) {
+    if (trigger_enable_num == 1000) {
+      trigger_motor.write_enable(can2.tx_data);
+      can2.send(trigger_motor.tx_id);
+      trigger_enable_num = 0;
+    }
+    trigger_enable_num++;
   }
   //初次使能电机会进入Reset模式，需要再次使能设定为Motor模式
   if (!pitch_motor_alive || pitch_motor.mode != 2) {
