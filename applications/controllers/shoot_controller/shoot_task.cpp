@@ -11,9 +11,11 @@
 #include "tools/math_tools/math_tools.hpp"
 
 //目标摩擦轮转速
-float fric_target_speed = FRIC_SPEED;
+float fric_target_speed_first = FRIC_SPEED_FRIST;
+float fric_target_speed_second = FRIC_SPEED_SECOND;
 //摩擦轮设定开启转速
-float fric_on_speed = FRIC_SPEED;
+float fric_on_speed_first = FRIC_SPEED_FRIST;
+float fric_on_speed_second = FRIC_SPEED_SECOND;
 //目标拨弹轮位置
 float trigger_target_angle = 0.0f;
 //目标拨弹轮转速
@@ -75,7 +77,8 @@ void shoot_mode_init(void)
 {
   Fric_Mode = FRIC_DOWN;
   Trigger_Mode = SHOOT_READY_SINGLE;
-  fric_target_speed = FRIC_SPEED;
+  fric_target_speed_first = FRIC_SPEED_FRIST;
+  fric_target_speed_second = FRIC_SPEED_SECOND;
 }
 
 void fric_mode_control(void)
@@ -253,16 +256,17 @@ void trigger_mode_control(void)
 //摩擦轮目标速度设置与调整
 void fric_cmd(void)
 {
-  float speed = (fabs(fric_motor1.speed) + fabs(fric_motor2.speed)) / 2.0f;
+  float first_speed = (fabs(fric_motor1.speed) + fabs(fric_motor2.speed)+fabs(fric_motor3.speed)) / 3.0f;
+  float second_speed = (fabs(fric_motor4.speed) + fabs(fric_motor5.speed)+fabs(fric_motor6.speed)) / 3.0f;
   //摩擦轮转速正常（从down切换到on到转速稳定了;变目标速度稳定之后再打弹）
-  if (!fric_speed_normal_flag && fric_target_speed != 0) {
-    if (fabs(speed - fric_target_speed) < 2.0f) {
+  if (!fric_speed_normal_flag && fric_target_speed_first != 0 && fric_target_speed_second != 0) {
+    if (fabs(first_speed - fric_target_speed_first) < 2.0f && fabs(second_speed - fric_target_speed_second) < 2.0f) {
       fric_speed_normal_flag = true;
     }
   }
   //摩擦轮速度切换的标志位
   if (!fric_target_change_flag) {
-    if (fabs(speed - fric_target_speed) < 2.0f) {
+    if (fabs(first_speed - fric_target_speed_first) < 2.0f) {
       fric_target_change_flag = true;
     }
   }
@@ -272,11 +276,13 @@ void fric_cmd(void)
     initial_speed = pm02.shoot.initial_speed;
     //摩擦轮设置目标速度
     if (Last_Fric_Mode != FRIC_ON) {
-      fric_target_speed = fric_on_speed;
+      fric_target_speed_first = fric_on_speed_first;
+      fric_target_speed_second = fric_on_speed_second;
     }
     //最高射速限制12：超射速摩擦轮自动降速
     if ((initial_speed != last_initial_speed) && pm02.shoot.initial_speed > 12.0f && key_shoot) {
-      fric_target_speed -= 20.0f;
+      fric_target_speed_first -= 20.0f;
+      fric_target_speed_second -= 20.0f;
       fric_target_change_flag = false;
     }
     //操作手手动调整摩擦轮转速
@@ -286,13 +292,17 @@ void fric_cmd(void)
       }
       if (key_fric_up && fric_target_change_count == 0) {
         fric_target_change_count = 300;
-        fric_on_speed += 10.0f;
-        fric_target_speed = fric_on_speed;
+        fric_on_speed_first += 10.0f;
+        fric_on_speed_second += 10.0f;
+        fric_target_speed_first = fric_on_speed_first;
+        fric_target_speed_second = fric_on_speed_second;
       }
       if (key_fric_down && fric_target_change_count == 0) {
         fric_target_change_count = 300;
-        fric_on_speed -= 10.0f;
-        fric_target_speed = fric_on_speed;
+        fric_on_speed_first -= 10.0f;
+        fric_on_speed_second -= 10.0f;
+        fric_target_speed_first = fric_on_speed_first;
+        fric_target_speed_second = fric_on_speed_second;
       }
     }
     // fric_target_speed = sp::limit_min_max(fric_target_speed, 300.0f, 600.0f);
@@ -300,7 +310,8 @@ void fric_cmd(void)
   }
   if (Fric_Mode == FRIC_OFF) {
     Last_Fric_Mode = FRIC_OFF;
-    fric_target_speed = 0.0f;
+    fric_target_speed_first = 0.0f;
+    fric_target_speed_second = 0.0f;
     fric_speed_normal_flag = false;
   }
   if (Fric_Mode == FRIC_DOWN) {

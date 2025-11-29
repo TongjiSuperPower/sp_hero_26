@@ -1,17 +1,19 @@
 #ifndef SHOOT_TASK_HPP
 #define SHOOT_TASK_HPP
 #include "A_HERO_SELECTION.hpp"
+#include "io/imu_task.hpp"
 #include "io/vision/vision.hpp"
-#include "motor/rm_motor/rm_motor.hpp"
 #include "motor/dm_motor/dm_motor.hpp"
+#include "motor/rm_motor/rm_motor.hpp"
 #include "referee/pm02/pm02.hpp"
 #include "tools/pid/pid.hpp"
-#include "io/imu_task.hpp"
 // -------------------- 控制参数 --------------------
 constexpr float T_SHOOT = 1e-3f;  // 控制周期, 单位: s
 //摩擦轮转速rad/s
 #ifdef HERO_DOG
-constexpr float FRIC_SPEED = 540.0f;//控制摩擦轮转速
+constexpr float FRIC_SPEED = 540.0f;         //摩擦轮转速
+constexpr float FRIC_SPEED_FRIST = 540.0f;   //前级摩擦轮转速
+constexpr float FRIC_SPEED_SECOND = 540.0f;  //后级摩擦轮转速
 #endif
 
 #ifdef HERO_THREE_WHEELS
@@ -55,7 +57,8 @@ extern uint8_t shoot_mode_flag;
 //发送给拨弹轮的扭矩（用于判断拨弹轮是否堵转）
 extern float trigger_give_torque;
 
-extern float fric_target_speed;
+extern float fric_target_speed_first;
+extern float fric_target_speed_second;
 extern float aim_trigger_speed_before;
 extern float trigger_target_speed;
 extern float trigger_target_angle;
