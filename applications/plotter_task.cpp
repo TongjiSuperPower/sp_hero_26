@@ -15,7 +15,8 @@ extern "C" void Plotter_Task()
     plotter.plot(
       // trigger_motor.angle
       // imu.pitch,pitch_torque,1
-      imu.pitch,pitch_target_angle, pitch_torque,a,b,c,d
+      fric_motor1.speed,-fric_motor2.speed,fric_motor3.speed,fric_motor4.speed,-fric_motor5.speed,fric_motor6.speed,pm02.shoot.initial_speed
+      // imu.pitch,pitch_target_angle, pitch_torque,a,b,c,d
       // imu.pitch,pitch_target_angle, pitch_torque, gravity_compensation,pitch_encode_speed_pid.out,pitch_encode_pos_pid.out
       // pitch_target_angle,pitch_relative_angle,pitch_encode_pos_pid.out,pitch_encode_pos_pid.data.pout,pitch_encode_pos_pid.data.iout,pitch_encode_pos_pid.data.dout
     );

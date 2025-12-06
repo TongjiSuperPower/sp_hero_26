@@ -12,8 +12,8 @@ constexpr float T_SHOOT = 1e-3f;  // 控制周期, 单位: s
 //摩擦轮转速rad/s
 #ifdef HERO_DOG
 constexpr float FRIC_SPEED = 540.0f;         //摩擦轮转速
-constexpr float FRIC_SPEED_FRIST = 540.0f;   //前级摩擦轮转速
-constexpr float FRIC_SPEED_SECOND = 540.0f;  //后级摩擦轮转速
+constexpr float FRIC_SPEED_FRIST = 560.0f;   //前级摩擦轮转速
+constexpr float FRIC_SPEED_SECOND = 500.0f;  //后级摩擦轮转速
 #endif
 
 #ifdef HERO_THREE_WHEELS
