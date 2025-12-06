@@ -12,10 +12,8 @@
 #include "tools/math_tools/math_tools.hpp"
 #include "tools/mecanum/mecanum.hpp"
 
-//上坡角度
 //pitch相对角度滤波
 sp::LowPassFilter pitch_relative_angle_filter(0.1f);
-extern float slope_angle;
 
 //云台回中模式下回中后的时间
 uint16_t gimbal_init_over_time = 0;
@@ -84,8 +82,8 @@ extern "C" void Gimbal_Task()
 void gimbal_init()
 {
 #ifdef HERO_DOG
-  yaw_offecd_ecd_angle = -0.53349f;
-  pitch_offecd_ecd_angle = 0.62146f;
+  yaw_offecd_ecd_angle = 2.52291012f;
+  pitch_offecd_ecd_angle = 0.75146f;
 #endif
 #ifdef HERO_THREE_WHEELS
   yaw_offecd_ecd_angle = 2.3814f;
@@ -164,7 +162,7 @@ void gimbal_cmd()
 #endif
 #ifdef RMUC
       pitch_target_angle = sp::limit_min_max(
-        pitch_target_angle, IMU_PITCH_ANGLE_MIN + slope_angle, IMU_PITCH_ANGLE_MAX + slope_angle);
+        pitch_target_angle, IMU_PITCH_ANGLE_MIN, IMU_PITCH_ANGLE_MAX);
 #endif
     }
     //键鼠
@@ -199,7 +197,7 @@ void gimbal_cmd()
 #endif
 #ifdef RMUC
       pitch_target_angle = sp::limit_min_max(
-        pitch_target_angle, IMU_PITCH_ANGLE_MIN + slope_angle, IMU_PITCH_ANGLE_MAX + slope_angle);
+        pitch_target_angle, IMU_PITCH_ANGLE_MIN , IMU_PITCH_ANGLE_MAX );
 #endif
     }
   }
@@ -217,7 +215,7 @@ void gimbal_cmd()
 #endif
 #ifdef RMUC
       pitch_target_angle = sp::limit_min_max(
-        vis.pitch, IMU_PITCH_ANGLE_MIN + slope_angle, IMU_PITCH_ANGLE_MAX + slope_angle);
+        vis.pitch, IMU_PITCH_ANGLE_MIN , IMU_PITCH_ANGLE_MAX );
 #endif
     }
   }
