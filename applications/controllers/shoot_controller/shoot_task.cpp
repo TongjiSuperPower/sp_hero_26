@@ -107,7 +107,7 @@ void fric_mode_control(void)
 
 #ifdef DT7
   static bool last_fric_flag = remote.sw_l == sp::DBusSwitchMode::UP;
-  if (Global_Mode == ZERO_FORCE || !pm02.robot_status.power_management_shooter_output == 0) {
+  if (Global_Mode == ZERO_FORCE) {
     Fric_Mode = FRIC_DOWN;
     Shoot_Mode = FIRE_DOWN;
     fric_speed_normal_flag = false;

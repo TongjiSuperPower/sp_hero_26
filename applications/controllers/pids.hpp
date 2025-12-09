@@ -67,12 +67,12 @@ inline sp::PID triggerback_speed_pid2(
   T_CONTROL, 0.53f, 0.0f, 0.002f, TRIGGER_MAX_TORQUE, TRIGGER_MAX_TORQUE, 1, false, true);
 
 //摩擦轮3508单环速度环PID
-inline sp::PID fricmotor1_pid(T_CONTROL, 0.0032f, 0.0f, 0.000001f, 0.34, 0.1, 0.8);
-inline sp::PID fricmotor2_pid(T_CONTROL, 0.0032f, 0.0f, 0.000001f, 0.34, 0.1, 0.8);
-inline sp::PID fricmotor3_pid(T_CONTROL, 0.0032f, 0.0f, 0.000001f, 0.34, 0.1, 0.8);
+inline sp::PID fricmotor1_pid(T_CONTROL, 0.0005f, 0.0f, 0.000001f, 0.34, 0.1, 0.8);
+inline sp::PID fricmotor2_pid(T_CONTROL, 0.0005f, 0.0f, 0.000001f, 0.34, 0.1, 0.8);
+inline sp::PID fricmotor3_pid(T_CONTROL, 0.0005f, 0.0f, 0.000001f, 0.34, 0.1, 0.8);
 inline sp::PID fricmotor4_pid(T_CONTROL, 0.0032f, 0.0f, 0.000001f, 0.34, 0.1, 0.8);
 inline sp::PID fricmotor5_pid(T_CONTROL, 0.0032f, 0.0f, 0.000001f, 0.34, 0.1, 0.8);
 inline sp::PID fricmotor6_pid(T_CONTROL, 0.0032f, 0.0f, 0.000001f, 0.34, 0.1, 0.8);
-#endif
+#endif  
 
 #endif
