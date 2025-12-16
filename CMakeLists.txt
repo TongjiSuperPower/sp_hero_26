@@ -21,16 +21,15 @@ endif()
 # Set the project name
 set(CMAKE_PROJECT_NAME 2026_HERO)
 
-
 # Enable compile command to ease indexing with e.g. clangd
 set(CMAKE_EXPORT_COMPILE_COMMANDS TRUE)
-
-# Enable CMake support for ASM and C languages
-enable_language(C ASM)
 
 # Core project settings
 project(${CMAKE_PROJECT_NAME})
 message("Build type: " ${CMAKE_BUILD_TYPE})
+
+# Enable CMake support for ASM and C languages
+enable_language(C ASM)
 
 # Create an executable object type
 add_executable(${CMAKE_PROJECT_NAME})
@@ -46,53 +45,54 @@ target_link_directories(${CMAKE_PROJECT_NAME} PRIVATE
 # Add sources to executable
 target_sources(${CMAKE_PROJECT_NAME} PRIVATE
     # Add user sources here
-    applications/io/led_task.cpp
-    applications/data_interfaces/uart/uart_task.cpp
-    applications/io/calibrate_task.cpp
-    applications/plotter_task.cpp
+    applications/io/led_task.cpp 
     applications/io/buzzer_task.cpp
+    applications/data/uart/uart_task.cpp 
+    applications/data/can/can_receive.cpp
+    applications/data/can/can_send.cpp
+    applications/HERO_SELECTION.hpp
+    applications/mode.cpp
+    applications/controllers/chassis_task/chassis_task.cpp 
+    applications/controllers/gimbal_task/gimbal_task.cpp
+    applications/controllers/shoot_task/shoot_task.cpp
+    applications/controllers/power_limit/power_limit.cpp
+    applications/control_task.cpp
+    applications/keys.cpp
     applications/io/imu_task.cpp
-    applications/data_interfaces/can/can.cpp
-    applications/data_interfaces/can/can_recv.cpp
-    applications/data_interfaces/uart/uart_task.cpp
-    applications/controllers/chassis_controller/chassis_task.cpp
-    applications/controllers/keys.cpp
-    applications/controllers/detect_task.cpp
-    applications/controllers/control_task.cpp
     applications/io/calibrate_task.cpp
-    applications/controllers/mode.cpp
-    applications/controllers/chassis_controller/energy_control.cpp
-    applications/controllers/chassis_controller/power_control.cpp
-    applications/controllers/gimbal_controller/gimbal_task.cpp
-    applications/controllers/shoot_controller/shoot_task.cpp
+    applications/io/servo_task.cpp
+    applications/detect_task.cpp
+    applications/plotter_task.cpp
+    
+
+
+    sp_middleware/io/dbus/dbus.cpp 
     sp_middleware/io/led/led.cpp
-    sp_middleware/io/buzzer/buzzer.cpp
-    sp_middleware/io/plotter/plotter.cpp
-    sp_middleware/io/bmi088/bmi088.cpp
-    sp_middleware/tools/mahony/mahony.cpp
-    sp_middleware/tools/low_pass_filter/low_pass_filter.cpp
-    sp_middleware/tools/pid/pid.cpp
-    sp_middleware/tools/math_tools/math_tools.cpp
-    sp_middleware/referee/pm02/pm02.cpp
-    sp_middleware/tools/crc/crc.cpp
-    sp_middleware/io/dbus/dbus.cpp
-    sp_middleware/io/can/can.cpp
-    sp_middleware/motor/rm_motor/rm_motor.cpp
-    sp_middleware/referee/ui/manager.cpp
-    sp_middleware/referee/ui/element.cpp
-    sp_middleware/tools/mecanum/mecanum.cpp
-    sp_middleware/io/adc/adc.cpp
-    sp_middleware/motor/dm_motor/dm_motor.cpp
-    sp_middleware/motor/super_cap/super_cap.cpp
-    sp_middleware/motor/cybergear_motor/cybergear_motor.cpp
+    sp_middleware/io/buzzer/buzzer.cpp 
     sp_middleware/io/vision/vision.cpp
+    sp_middleware/io/can/can.cpp
+    sp_middleware/io/bmi088/bmi088.cpp
+    sp_middleware/referee/pm02/pm02.cpp
+    sp_middleware/tools/mecanum/mecanum.cpp
+    sp_middleware/motor/rm_motor/rm_motor.cpp
+    sp_middleware/motor/dm_motor/dm_motor.cpp
+    sp_middleware/motor/cybergear_motor/cybergear_motor.cpp
+    sp_middleware/motor/super_cap/super_cap.cpp
     sp_middleware/referee/vt03/vt03.cpp
+    sp_middleware/tools/crc/crc.cpp
+    sp_middleware/tools/math_tools/math_tools.cpp
+    sp_middleware/tools/pid/pid.cpp
+    sp_middleware/tools/low_pass_filter/low_pass_filter.cpp
+    sp_middleware/tools/mahony/mahony.cpp
+    sp_middleware/io/plotter/plotter.cpp
+    sp_middleware/io/servo/servo.cpp
+
 )
 
 # Add include paths
 target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE
     # Add user defined include paths
-    sp_middleware/
+    sp_middleware/ # <- 添加这一行
     applications/
 )
 
@@ -100,6 +100,9 @@ target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE
 target_compile_definitions(${CMAKE_PROJECT_NAME} PRIVATE
     # Add user defined symbols
 )
+
+# Remove wrong libob.a library dependency when using cpp files
+list(REMOVE_ITEM CMAKE_C_IMPLICIT_LINK_LIBRARIES ob)
 
 # Add linked libraries
 target_link_libraries(${CMAKE_PROJECT_NAME}

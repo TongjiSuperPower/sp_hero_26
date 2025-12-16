@@ -1,0 +1,59 @@
+#include "can_receive.hpp"
+
+#include "can_send.hpp"
+#include "cmsis_os.h"
+#include "controllers/chassis_task/chassis_task.hpp"
+#include "controllers/gimbal_task/gimbal_task.hpp"
+#include "controllers/shoot_task/shoot_task.hpp"
+
+void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef * hcan)
+{
+  auto stamp_ms = osKernelSysTick();  // 获取当前的系统时间戳（以毫秒为单位）
+  while (HAL_CAN_GetRxFifoFillLevel(hcan, CAN_RX_FIFO0) > 0) {
+    if (hcan == &hcan1) {
+      can1.recv();
+      if (!can1.frame_type) {
+        if (can1.rx_id == fric_motor1.rx_id) {
+          fric_motor1.read(can1.rx_data, stamp_ms);
+        }
+        else if (can1.rx_id == fric_motor2.rx_id) {
+          fric_motor2.read(can1.rx_data, stamp_ms);
+        }
+        else if (can1.rx_id == fric_motor3.rx_id) {
+          fric_motor3.read(can1.rx_data, stamp_ms);
+        }
+        else if (can1.rx_id == fric_motor4.rx_id) {
+          fric_motor4.read(can1.rx_data, stamp_ms);
+        }
+        else if (can1.rx_id == fric_motor5.rx_id) {
+          fric_motor5.read(can1.rx_data, stamp_ms);
+        }
+        else if (can1.rx_id == fric_motor6.rx_id) {
+          fric_motor6.read(can1.rx_data, stamp_ms);
+        }
+      }
+      else if (can1.frame_type) {
+        pitch_motor.read(can1.rx_id, can1.rx_data, stamp_ms);
+      }
+    }
+    if (hcan == &hcan2) {
+      can2.recv();
+      if (can2.rx_id == wheel_lf.rx_id)
+        wheel_lf.read(can2.rx_data, stamp_ms);
+      else if (can2.rx_id == wheel_lb.rx_id)
+        wheel_lb.read(can2.rx_data, stamp_ms);
+      else if (can2.rx_id == wheel_rf.rx_id)
+        wheel_rf.read(can2.rx_data, stamp_ms);
+      else if (can2.rx_id == wheel_rb.rx_id)
+        wheel_rb.read(can2.rx_data, stamp_ms);
+      else if (can2.rx_id == trigger_motor.rx_id)
+        trigger_motor.read(can2.rx_data, stamp_ms);
+      else if (can2.rx_id == yaw_motor.rx_id) {
+        yaw_motor.read(can2.rx_data, stamp_ms);
+      }
+      else if (can2.rx_id == super_cap.rx_id) {
+        super_cap.read(can2.rx_data, stamp_ms);
+      }
+    }
+  }
+}

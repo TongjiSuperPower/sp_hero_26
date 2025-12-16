@@ -2,10 +2,11 @@
 #define _CALIBRATE_TASK_H_
 #include <cstdint>
 
-#include "A_HERO_SELECTION.hpp"
+#include "HERO_SELECTION.hpp"
 #include "cmsis_os.h"
-#include "data_interfaces/uart/uart_task.hpp"
+#include "data/uart/uart_task.hpp"
 #include "imu_task.hpp"
+#include "mode.hpp"
 
 // -------------------- 对外调试 --------------------
 extern uint8_t calibrate_flag;

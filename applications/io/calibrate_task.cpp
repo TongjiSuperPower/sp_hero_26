@@ -70,30 +70,30 @@ void calibration_start(void)
     }
   }
 #endif
-
-#ifdef VT03
-  //当摇杆"/\"",右拨杆在下时
-  if (
-    (Global_Mode == ZERO_FORCE) && (vt03.ch_rh > 0.9f) && (vt03.ch_rv < -0.9f) &&
-    (vt03.ch_lh < -0.9f) && (vt03.ch_lv < -0.9f)) {
-    //如果没有在校准
-    if (calibrate_flag == 0) {
-      if (start_count < 2000) {
-        start_count++;
-      }
-      //校准开始
-      if (start_count > 2000 - 1) {
-        start_count = 0;
-        calibrate_flag = 1;
-        sum_x = 0.0f;
-        sum_y = 0.0f;
-        sum_z = 0.0f;
-      }
-    }
-  }
-
-#endif
 }
+// #ifdef VT03
+//   //当摇杆"/\"",右拨杆在下时
+//   if (
+//     (Global_Mode == ZERO_FORCE) && (vt03.ch_rh > 0.9f) && (vt03.ch_rv < -0.9f) &&
+//     (vt03.ch_lh < -0.9f) && (vt03.ch_lv < -0.9f)) {
+//     //如果没有在校准
+//     if (calibrate_flag == 0) {
+//       if (start_count < 2000) {
+//         start_count++;
+//       }
+//       //校准开始
+//       if (start_count > 2000 - 1) {
+//         start_count = 0;
+//         calibrate_flag = 1;
+//         sum_x = 0.0f;
+//         sum_y = 0.0f;
+//         sum_z = 0.0f;
+//       }
+//     }
+//   }
+
+// #endif
+// }
 
 //陀螺仪均值校准
 void gyro_calibration(void)
@@ -110,9 +110,9 @@ void gyro_calibration(void)
         gyro_z_zero += sum_z / 20000;
       }
     }
-    else {
-      calibrate_flag = 0;
-      calibration_count = 0;
-    }
+  }
+  else {
+    calibrate_flag = 0;
+    calibration_count = 0;
   }
 }

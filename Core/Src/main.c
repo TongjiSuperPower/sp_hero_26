@@ -21,9 +21,7 @@
 #include "cmsis_os.h"
 #include "adc.h"
 #include "can.h"
-#include "crc.h"
 #include "dma.h"
-#include "rng.h"
 #include "rtc.h"
 #include "spi.h"
 #include "tim.h"
@@ -112,8 +110,6 @@ int main(void)
   MX_USART6_UART_Init();
   MX_ADC3_Init();
   MX_RTC_Init();
-  MX_CRC_Init();
-  MX_RNG_Init();
   /* USER CODE BEGIN 2 */
 
   /* USER CODE END 2 */
@@ -199,7 +195,8 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
   /* USER CODE BEGIN Callback 0 */
 
   /* USER CODE END Callback 0 */
-  if (htim->Instance == TIM3) {
+  if (htim->Instance == TIM3)
+  {
     HAL_IncTick();
   }
   /* USER CODE BEGIN Callback 1 */
@@ -221,8 +218,7 @@ void Error_Handler(void)
   }
   /* USER CODE END Error_Handler_Debug */
 }
-
-#ifdef  USE_FULL_ASSERT
+#ifdef USE_FULL_ASSERT
 /**
   * @brief  Reports the name of the source file and the source line number
   *         where the assert_param error has occurred.

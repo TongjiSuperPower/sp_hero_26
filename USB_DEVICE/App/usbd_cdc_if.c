@@ -20,9 +20,9 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "usbd_cdc_if.h"
-
+#include "HERO_SELECTION.hpp"
 /* USER CODE BEGIN INCLUDE */
-#include "A_HERO_SELECTION.hpp"
+
 /* USER CODE END INCLUDE */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -262,7 +262,7 @@ static int8_t CDC_Receive_FS(uint8_t* Buf, uint32_t *Len)
 {
   /* USER CODE BEGIN 6 */
   #ifdef MPC
-  vision_callback(Buf, *Len);
+  vision_callback(Buf,*Len);
   #endif
   USBD_CDC_SetRxBuffer(&hUsbDeviceFS, &Buf[0]);
   USBD_CDC_ReceivePacket(&hUsbDeviceFS);

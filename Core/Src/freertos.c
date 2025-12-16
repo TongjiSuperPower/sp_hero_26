@@ -59,6 +59,8 @@ osThreadId plotter_taskHandle;
 osThreadId control_taskHandle;
 osThreadId detect_taskHandle;
 osThreadId keys_taskHandle;
+osThreadId shoot_taskHandle;
+osThreadId servo_taskHandle;
 
 /* Private function prototypes -----------------------------------------------*/
 /* USER CODE BEGIN FunctionPrototypes */
@@ -77,6 +79,8 @@ void Plotter_Task(void const * argument);
 void Control_Task(void const * argument);
 void Detect_Task(void const * argument);
 void Keys_Task(void const * argument);
+void Shoot_Task(void const * argument);
+void fpv_task(void const * argument);
 
 extern void MX_USB_DEVICE_Init(void);
 void MX_FREERTOS_Init(void); /* (MISRA C 2004 rule 8.1) */
@@ -171,6 +175,14 @@ void MX_FREERTOS_Init(void) {
   /* definition and creation of keys_task */
   osThreadDef(keys_task, Keys_Task, osPriorityNormal, 0, 128);
   keys_taskHandle = osThreadCreate(osThread(keys_task), NULL);
+
+  /* definition and creation of shoot_task */
+  osThreadDef(shoot_task, Shoot_Task, osPriorityAboveNormal, 0, 256);
+  shoot_taskHandle = osThreadCreate(osThread(shoot_task), NULL);
+
+  /* definition and creation of servo_task */
+  osThreadDef(servo_task, fpv_task, osPriorityAboveNormal, 0, 128);
+  servo_taskHandle = osThreadCreate(osThread(servo_task), NULL);
 
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
@@ -394,6 +406,42 @@ __weak void Keys_Task(void const * argument)
     osDelay(1);
   }
   /* USER CODE END Keys_Task */
+}
+
+/* USER CODE BEGIN Header_Shoot_Task */
+/**
+* @brief Function implementing the shoot_task thread.
+* @param argument: Not used
+* @retval None
+*/
+/* USER CODE END Header_Shoot_Task */
+__weak void Shoot_Task(void const * argument)
+{
+  /* USER CODE BEGIN Shoot_Task */
+  /* Infinite loop */
+  for(;;)
+  {
+    osDelay(1);
+  }
+  /* USER CODE END Shoot_Task */
+}
+
+/* USER CODE BEGIN Header_fpv_task */
+/**
+* @brief Function implementing the servo_task thread.
+* @param argument: Not used
+* @retval None
+*/
+/* USER CODE END Header_fpv_task */
+__weak void fpv_task(void const * argument)
+{
+  /* USER CODE BEGIN fpv_task */
+  /* Infinite loop */
+  for(;;)
+  {
+    osDelay(1);
+  }
+  /* USER CODE END fpv_task */
 }
 
 /* Private application code --------------------------------------------------*/
