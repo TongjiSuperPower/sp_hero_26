@@ -20,7 +20,7 @@ extern "C" void Plotter_Task()
       // imu.pitch,pitch_target_angle, pitch_torque, gravity_compensation,pitch_encode_speed_pid.out,pitch_encode_pos_pid.out
       // pitch_target_angle,pitch_relative_angle,pitch_encode_pos_pid.out,pitch_encode_pos_pid.data.pout,pitch_encode_pos_pid.data.iout,pitch_encode_pos_pid.data.dout
     );
-    osDelay(10);
+    osDelay(1);
   }
   /* USER CODE END Plotter_Task */
 }
