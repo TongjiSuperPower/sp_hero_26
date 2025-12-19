@@ -12,8 +12,10 @@
 #include "tools/math_tools/math_tools.hpp"
 #include "tools/mecanum/mecanum.hpp"
 
+//上坡角度
 //pitch相对角度滤波
 sp::LowPassFilter pitch_relative_angle_filter(0.1f);
+extern float slope_angle;
 
 //云台回中模式下回中后的时间
 uint16_t gimbal_init_over_time = 0;
@@ -26,12 +28,17 @@ uint16_t turnover_cold_time = TURNOVER_COLDTIME;
 //发送给上位机的射击状态标识符
 uint8_t shoot_mode_flag = 0;
 
+//舵机位置控制
+float servo_position;
+
 //云台初始化
 void gimbal_init();
 //云台状态选择
 void gimbal_mode_control();
 //云台电流解算
 void gimbal_cmd();
+//舵机控制
+void servo_cmd();
 
 //变量们
 //当中码盘值等效换算的角度
@@ -73,6 +80,8 @@ extern "C" void Gimbal_Task()
     fric_cmd();
     //计算拨弹轮目标角度
     trigger_cmd();
+    //舵机控制
+    servo_cmd();
 
     osDelay(1);
   }
@@ -82,8 +91,8 @@ extern "C" void Gimbal_Task()
 void gimbal_init()
 {
 #ifdef HERO_DOG
-  yaw_offecd_ecd_angle = 2.52291012f;
-  pitch_offecd_ecd_angle = 0.75146f;
+  yaw_offecd_ecd_angle = -3.0901f;
+  pitch_offecd_ecd_angle = 0.62146f;
 #endif
 #ifdef HERO_THREE_WHEELS
   yaw_offecd_ecd_angle = 2.3814f;
@@ -162,7 +171,7 @@ void gimbal_cmd()
 #endif
 #ifdef RMUC
       pitch_target_angle = sp::limit_min_max(
-        pitch_target_angle, IMU_PITCH_ANGLE_MIN, IMU_PITCH_ANGLE_MAX);
+        pitch_target_angle, IMU_PITCH_ANGLE_MIN + slope_angle, IMU_PITCH_ANGLE_MAX + slope_angle);
 #endif
     }
     //键鼠
@@ -177,11 +186,11 @@ void gimbal_cmd()
       if (turnover_cold_time > 0) {
         turnover_cold_time--;
       }
-      if (key_yaw_left_90 && turnover_cold_time == 0) {
+      if (key_yaw_left_90 && turnover_cold_time == 0 && !remote.keys.c) {
         yaw_target_angle += sp::PI / 2;
         turnover_cold_time = TURNOVER_COLDTIME;
       }
-      if (key_yaw_right_90 && turnover_cold_time == 0) {
+      if (key_yaw_right_90 && turnover_cold_time == 0 && !remote.keys.c) {
         yaw_target_angle += -sp::PI / 2;
         turnover_cold_time = TURNOVER_COLDTIME;
       }
@@ -197,7 +206,7 @@ void gimbal_cmd()
 #endif
 #ifdef RMUC
       pitch_target_angle = sp::limit_min_max(
-        pitch_target_angle, IMU_PITCH_ANGLE_MIN , IMU_PITCH_ANGLE_MAX );
+        pitch_target_angle, IMU_PITCH_ANGLE_MIN + slope_angle, IMU_PITCH_ANGLE_MAX + slope_angle);
 #endif
     }
   }
@@ -215,7 +224,7 @@ void gimbal_cmd()
 #endif
 #ifdef RMUC
       pitch_target_angle = sp::limit_min_max(
-        vis.pitch, IMU_PITCH_ANGLE_MIN , IMU_PITCH_ANGLE_MAX );
+        vis.pitch, IMU_PITCH_ANGLE_MIN + slope_angle, IMU_PITCH_ANGLE_MAX + slope_angle);
 #endif
     }
   }
@@ -237,4 +246,23 @@ void gimbal_cmd()
       gimbal_init_flag = false;
     }
   }
+}
+
+void servo_cmd()
+{
+  static uint8_t last_key_q = 0;
+  static uint8_t last_key_e = 0;
+
+  // 按住C键时，检测Q键按下边缘（从未按下到按下的瞬间）
+  if (remote.keys.c && remote.keys.q && !last_key_q) {
+    servo_position += 2.0f;  // 增加一个小角度
+  }
+  // 按住C键时，检测E键按下边缘（从未按下到按下的瞬间）
+  else if (remote.keys.c && remote.keys.e && !last_key_e) {
+    servo_position -= 2.0f;  // 减少一个小角度
+  }
+
+  // 更新上一次的按键状态
+  last_key_q = remote.keys.q;
+  last_key_e = remote.keys.e;
 }

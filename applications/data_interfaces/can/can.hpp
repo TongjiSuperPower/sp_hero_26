@@ -10,5 +10,6 @@ void fric_send();
 void trigger_send();
 void yaw_send();
 void pitch_send();
+void super_cap_send();
 
 #endif

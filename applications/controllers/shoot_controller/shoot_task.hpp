@@ -1,12 +1,12 @@
 #ifndef SHOOT_TASK_HPP
 #define SHOOT_TASK_HPP
 #include "A_HERO_SELECTION.hpp"
+#include "io/imu_task.hpp"
 #include "io/vision/vision.hpp"
-#include "motor/rm_motor/rm_motor.hpp"
 #include "motor/dm_motor/dm_motor.hpp"
+#include "motor/rm_motor/rm_motor.hpp"
 #include "referee/pm02/pm02.hpp"
 #include "tools/pid/pid.hpp"
-#include "io/imu_task.hpp"
 // -------------------- 控制参数 --------------------
 constexpr float T_SHOOT = 1e-3f;  // 控制周期, 单位: s
 //摩擦轮转速rad/s
@@ -24,7 +24,7 @@ constexpr float TRIGGER_BACK_ANGLE = 0.6f;  //rad
 //拨弹轮双发反转角度
 constexpr float TRIGGER_SINGLE_BACK_ANGLE = 0.4f;  //rad
 //拨弹轮复位角度
-constexpr float TRIGGER_INIT_ANGLE = -1.5103f;  //rad
+constexpr float TRIGGER_INIT_ANGLE = -2.481107f;  //rad
 
 // -------------------- SHOOT_READY_SINGLE相关 --------------------
 //每次射击冷却时间
@@ -93,6 +93,12 @@ extern float fric_on_speed;
 extern uint16_t fric_target_change_count;
 extern bool fric_target_change_flag;
 
+//热量预测
+extern float cal_heat;
+extern uint32_t shoot_count;
+extern float fric_speed;
+extern float last_fric_speed;
+
 //状态机初始化
 void shoot_mode_init(void);
 //摩擦轮状态机控制函数
@@ -109,4 +115,6 @@ void shoot_init_cmd(void);
 void shoot_single_permission(void);
 //双发检测
 void shoot_double_detect();
+//热量预测
+void shoot_heat_cal();
 #endif

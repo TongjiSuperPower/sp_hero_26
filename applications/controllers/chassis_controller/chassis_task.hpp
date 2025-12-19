@@ -138,6 +138,7 @@ extern float wheel_rf_speed_filter;
 extern float wheel_rr_speed_filter;
 extern float energy_sum;
 extern float chassis_wz_filter;
+extern uint8_t low_vol_flag;
 // -------------------------------------------------
 
 #endif

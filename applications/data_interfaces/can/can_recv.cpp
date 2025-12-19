@@ -27,6 +27,8 @@ void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef * hcan)
         trigger_motor.read(can2.rx_data, stamp_ms);
       else if (can2.rx_id == yaw_motor.rx_id)
         yaw_motor.read(can2.rx_data, stamp_ms);
+      else if (can2.rx_id == super_cap.rx_id)
+        super_cap.read(can2.rx_data, stamp_ms);
     }
     if (hcan == &hcan1) {
       can1.recv();

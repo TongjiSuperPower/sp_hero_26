@@ -13,21 +13,24 @@
 // m = 0.0716, b = 0.2665, c = 0.3082
 // m = 0.0787, b = 0.2249, c = 0.3071
 // m = 0.0786, b = 0.2343, c = 0.3100
-// m = 0.0924, b = 0.1947, c = 0.2668
-constexpr float YAW_INERTIA = 0.0924f;
-constexpr float YAW_DAMPING_COEFF = 0.1947f;
-constexpr float YAW_COULOMB_FORCE = 0.2668f;
+//m = 0.0977, b = 0.2987, c = 0.3370
+//m = 0.0958, b = 0.3693, c = 0.3699
+// m = 0.0970, b = 0.2166, c = 0.3488
+constexpr float YAW_INERTIA = 0.0970f;
+constexpr float YAW_DAMPING_COEFF = 0.2566f;
+constexpr float YAW_COULOMB_FORCE = 0.3488f;
 
 // m = 0.0331, b = 0.2112, c = 0.1037, d = 1.8725
 // m = 0.0349, b = 0.2383, c = 0.0796, d = 1.8778
-// m = 0.0385, b = 0.1702, c = 0.1310, d = 2.0495
-// m = 0.0385, b = 0.2064, c = 0.1117, d = 2.0654
-// m = 0.0384, b = 0.2107, c = 0.1121, d = 2.0786
-// m = 0.0345, b = 0.3329, c = 0.0527, d = 2.0120
-constexpr float PITCH_INERTIA = 0.0345f;
-constexpr float PITCH_DAMPING_COEFF = 0.3329f;
-constexpr float PITCH_COULOMB_FORCE = 0.0527f;
-constexpr float PITCH_GRAVITY_TORQUE = 2.0120f;
+// m = 0.0395  b = 0.2486  c = 0.0800  d = 2.0584
+//m = 0.0470, b = 0.2353, c = 0.0264, d = 1.9543
+//m = 0.0468, b = 0.2527, c = 0.0107, d = 1.9504
+//m = 0.0285, b = 0.3924, c = -0.0116, d = 1.8834
+// m = 0.0319, b = 0.5028, c = -0.0764, d = 1.8483
+constexpr float PITCH_INERTIA = 0.0395;
+constexpr float PITCH_DAMPING_COEFF = 0.2486;
+constexpr float PITCH_COULOMB_FORCE = 0.0800;
+constexpr float PITCH_GRAVITY_TORQUE = 2.0584f;
 #endif
 
 extern float pitch_torque;

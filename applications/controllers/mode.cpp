@@ -19,7 +19,7 @@ shoot_mode Last_Shoot_Mode;
 //定义拨弹轮状态机
 trigger_mode Trigger_Mode;
 //记录反转之前的状态机
-trigger_mode Last_Trigger_Mode;
+
 
 void global_mode_control()
 {

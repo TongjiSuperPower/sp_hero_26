@@ -27,10 +27,14 @@ uint16_t pitch_enable_num = 0;
 float pitch_torque;
 float gravity_compensation;
 
+//调试变量
 float a;
 float b;
 float c;
 float d;
+float e;
+float f;
+float g;
 
 void motor_enable();
 void chassis_control();
@@ -59,6 +63,7 @@ extern "C" void Control_Task()
   trigger_motor.write_enable(can2.tx_data);
   can2.send(trigger_motor.tx_id);
   pitch_init();
+  servo.start();
 
   while (1) {
     // 确定全局状态机
@@ -81,7 +86,7 @@ extern "C" void Control_Task()
       trigger_motor.write_enable(can2.tx_data);
       can2.send(trigger_motor.tx_id);
     }
-
+    super_cap_send();
     //底盘控制
     chassis_control();
     //云台控制
@@ -99,6 +104,8 @@ extern "C" void Control_Task()
     yaw_send();
     //pitch（1个）
     pitch_send();
+    //舵机 PWM
+    servo.set(servo_position);
 
     osDelay(1);
   }
@@ -341,6 +348,9 @@ void gimbal_autoaim_control()
   auto yaw_torque = YAW_INERTIA * (vis.yaw_acc + yaw_acc_pid.out) +
                     YAW_DAMPING_COEFF * yaw_motor_speed +
                     (yaw_motor_speed > 0 ? 1.0f : -1.0f) * YAW_COULOMB_FORCE;
+  e = YAW_INERTIA * (vis.yaw_acc + yaw_acc_pid.out);
+  f = YAW_DAMPING_COEFF * yaw_motor_speed;
+  g = (yaw_motor_speed > 0 ? 1.0f : -1.0f) * YAW_COULOMB_FORCE;
   yaw_spin_compensation_pid.calc(-chassis_wz_filter, 0.0f);
   if (yaw_torque > MAX_4310_TORQUE) {
     yaw_cmd_torque = sp::limit_max(yaw_torque, MAX_4310_TORQUE);

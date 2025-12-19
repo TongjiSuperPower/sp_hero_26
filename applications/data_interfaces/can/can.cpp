@@ -7,11 +7,16 @@
 //chassis CAN2（4个）
 void chassis_send()
 {
-  wheel_lf.write(can2.tx_data);
-  wheel_lr.write(can2.tx_data);
-  wheel_rf.write(can2.tx_data);
-  wheel_rr.write(can2.tx_data);
-  can2.send(wheel_lf.tx_id);
+  static uint8_t count1 = 0;
+  count1++;
+  if (count1 >= 2) {
+    wheel_lf.write(can2.tx_data);
+    wheel_lr.write(can2.tx_data);
+    wheel_rf.write(can2.tx_data);
+    wheel_rr.write(can2.tx_data);
+    can2.send(wheel_lf.tx_id);
+    count1 = 0;
+  }
 }
 
 //摩擦轮和拨弹轮 CAN1（3个）
@@ -44,4 +49,17 @@ void pitch_send()
   can1.send_ext(
     pitch_motor.communication_type, pitch_motor.tar_torque, pitch_motor.motor_id,
     pitch_motor.master_id);
+}
+
+void super_cap_send()
+{
+  static uint8_t count = 0;
+  count++;
+  if (count >= 10) {
+    super_cap.write(
+      can2.tx_data, pm02.robot_status.chassis_power_limit, pm02.power_heat.buffer_energy,
+      pm02.robot_status.power_management_chassis_output);
+    can2.send(super_cap.tx_id);
+    count = 0;
+  }
 }

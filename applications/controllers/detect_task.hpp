@@ -15,13 +15,14 @@ extern bool fric_motor_alive;
 extern bool chassis_alive;
 extern bool gimbal_alive;
 extern bool shoot_alive;
+//坡度检测
+extern float slope_angle;
+extern uint32_t slope_time_10;
+extern uint32_t slope_time_20;
 //电池电压检测
 extern bool low_battery_flag;
 extern float voltage;
-
-//打弹颗数检测
-extern uint32_t shoot_count;
-extern float fric_speed;
-extern float last_fric_speed;
+//被墙卡住检测
+extern bool stuck_flag;
 
 #endif

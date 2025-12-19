@@ -37,6 +37,17 @@ float trigger_work_position[6];
 //开摩擦轮后第一次射击
 bool first_shoot = false;
 
+//热量与冷却计算
+//计算总热量
+float cal_heat = 0;
+//计算冷却计数器
+uint64_t cal_cooling_count = 0;
+//打弹颗数计数
+uint32_t shoot_count = 0;
+float fric_speed;
+float last_fric_speed;
+bool count_flag = true;
+
 // -------------------- 状态机与射击标识符相关 --------------------
 extern gimbal_mode Gimbal_Mode;
 
@@ -71,8 +82,6 @@ float shoot_time_second = 0.0f;
 bool shoot_fire_flag = false;
 //保存上一次目标拨弹轮转速
 float aim_trigger_speed_before = 0.0f;
-//剩余热量，只要大于100就可以发射
-float heat_remain = 0.0f;
 
 //射击模式初始化
 void shoot_mode_init(void)
@@ -330,6 +339,7 @@ void trigger_cmd(void)
       shoot_init_cmd();
     }
     else if (Fric_Mode == FRIC_ON && Trigger_Mode == SHOOT_READY_SINGLE) {
+      shoot_heat_cal();
       shoot_single_permission();
       shoot_double_detect();
     }
@@ -399,12 +409,11 @@ void shoot_single_permission(void)
     }
   }
 
-  //根据剩余热量进行热量控制
-  heat_remain = pm02.robot_status.shooter_barrel_heat_limit - HEAT_PER_SHOT;
-
   //SHOOT_READY_SINGLE射击条件：摩擦轮开+冷却结束+左拨杆下档/左键
   if (Global_Mode == REMOTE) {
-    if (Fric_Mode == FRIC_ON && remote_shoot && single_shoot_cold_time == 0 && heat_remain > 0.0f) {
+    if (
+      Fric_Mode == FRIC_ON && remote_shoot && single_shoot_cold_time == 0 &&
+      cal_heat < pm02.robot_status.shooter_barrel_heat_limit - HEAT_PER_SHOT) {
       if (first_shoot == true) {
         trigger_target_angle = trigger_near_work_position();
         first_shoot = false;
@@ -420,7 +429,7 @@ void shoot_single_permission(void)
     if (
       Fric_Mode == FRIC_ON &&
       (key_shoot || (vis.fire && vis.control && Gimbal_Mode == GIMBAL_AUTO)) &&
-      single_shoot_cold_time == 0 && heat_remain > 0.0f) {
+      single_shoot_cold_time == 0 && cal_heat < pm02.robot_status.shooter_barrel_heat_limit - HEAT_PER_SHOT) {
       if (first_shoot == true) {
         trigger_target_angle = trigger_near_work_position();
         first_shoot = false;
@@ -455,5 +464,37 @@ void shoot_double_detect(void)
   }
   else {
     double_shoot_flag = false;
+  }
+}
+
+void shoot_heat_cal()
+{
+  float a = (float)(pm02.robot_status.shooter_barrel_cooling_value);  //a为每秒冷却值
+  float b = HEAT_PER_SHOT;
+
+  last_fric_speed = fric_speed;
+  fric_speed = (-fric_motor1.speed + fric_motor2.speed) / 2.0f;
+  if (Fric_Mode == FRIC_ON && pm02.robot_status.power_management_shooter_output) {
+    if (last_fric_speed - fric_speed > 20.0f && count_flag == false) {
+      shoot_count++;
+      cal_heat += b;
+      count_flag = true;
+    }
+    else {
+      count_flag = false;
+    }
+  }
+
+  //热量每100ms计算一次，每次减少每秒冷却值的1/10
+  if (cal_heat > 0) {
+    cal_cooling_count++;
+    if (cal_cooling_count % 100 == 99) {
+      cal_heat -= a / 10;
+    }
+  }
+  if (cal_heat <= 0) {
+    cal_heat = 0;
+    shoot_count = 0;
+    cal_cooling_count = 0;
   }
 }

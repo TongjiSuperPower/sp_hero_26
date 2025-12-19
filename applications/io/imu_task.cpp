@@ -4,6 +4,7 @@
 #include "tim.h"
 #include "tools/low_pass_filter/low_pass_filter.hpp"
 #include "tools/pid/pid.hpp"
+#include "controllers/shoot_controller/shoot_task.hpp"
 
 extern uint8_t shoot_mode_flag;
 

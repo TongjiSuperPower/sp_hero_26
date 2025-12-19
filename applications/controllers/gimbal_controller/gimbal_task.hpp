@@ -8,6 +8,7 @@
 #include "tools/pid/pid.hpp"
 #include "tools/yaw_feedward/yaw_feedward.hpp"
 #include "motor/cybergear_motor/cybergear_motor.hpp"
+#include "io/servo/servo.hpp"
 
 // -------------------- 控制参数 --------------------
 constexpr float T_GIMBAL = 1e-3;
@@ -50,6 +51,7 @@ constexpr float OFFSET_ANGLE = 0.0f;  // rad
 // -------------------- 对外硬件 --------------------
 inline sp::DM_Motor yaw_motor(0x08, 0x04, 3.141593f, 30.0f, 10.0f);
 inline sp::CyberGear_Motor pitch_motor(Master_CAN_ID, CyberGear_CAN_ID, CYBERGEAR_MAX_POSITION, CYBERGEAR_MAX_SPEED, CYBERGEAR_MAX_TORQUE);
+inline sp::Servo servo(&htim1, TIM_CHANNEL_1, 168e6f, 270.0f); // 开发板最上面的PWM端口, 270度舵机
 
 // -------------------- 对外调试 --------------------
 extern float yaw_offecd_ecd_angle;
@@ -60,6 +62,7 @@ extern float pitch_relative_angle;
 extern float yaw_cmd_torque;
 extern float pitch_torque;
 extern float gravity_compensation;
+extern float servo_position;
 
 extern uint16_t gimbal_init_time;
 extern uint16_t gimbal_init_over_time;

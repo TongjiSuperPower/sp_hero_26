@@ -4,15 +4,16 @@
 #include "tools/pid/pid.hpp"
 
 constexpr float T_CONTROL = 1e-3f;  // 控制周期, 单位: s
+constexpr float T_CONTROL_WHEEL=2e-3f;
 
 //chassis pids
 constexpr float MAX_WHEEL_TORQUE = 5.859f;  // 底盘电机3508最大扭矩，单位N.m
 
 #ifdef HERO_DOG
-inline sp::PID speed_lf_pid(T_CONTROL, 0.3f, 0.0f, 0.0f, MAX_WHEEL_TORQUE, 0.5f, 0.15f);
-inline sp::PID speed_lr_pid(T_CONTROL, 0.3f, 0.0f, 0.0f, MAX_WHEEL_TORQUE, 0.8f, 0.15f);
-inline sp::PID speed_rf_pid(T_CONTROL, 0.3f, 0.0f, 0.0f, MAX_WHEEL_TORQUE, 0.5f, 0.15f);
-inline sp::PID speed_rr_pid(T_CONTROL, 0.3f, 0.0f, 0.0f, MAX_WHEEL_TORQUE, 0.5f, 0.15f);
+inline sp::PID speed_lf_pid(T_CONTROL_WHEEL, 0.3f, 0.0f, 0.0f, MAX_WHEEL_TORQUE, 0.5f, 0.15f);
+inline sp::PID speed_lr_pid(T_CONTROL_WHEEL, 0.3f, 0.0f, 0.0f, MAX_WHEEL_TORQUE, 0.8f, 0.15f);
+inline sp::PID speed_rf_pid(T_CONTROL_WHEEL, 0.3f, 0.0f, 0.0f, MAX_WHEEL_TORQUE, 0.5f, 0.15f);
+inline sp::PID speed_rr_pid(T_CONTROL_WHEEL, 0.3f, 0.0f, 0.0f, MAX_WHEEL_TORQUE, 0.5f, 0.15f);
 #endif
 
 //gimbal pids
@@ -41,7 +42,8 @@ inline sp::PID pitch_encode_speed_pid(
 #ifdef MPC
 inline sp::PID yaw_vel_pid(1e-3f, 1, 0, 0, 100, 0, 1.0f, true, false);
 inline sp::PID pitch_vel_pid(1e-3f, 1, 0, 0, 100, 0, 1.0f, true, false);
-inline sp::PID yaw_acc_pid(1e-3f, 500, 1000, 45, 100, 10, 1.0f, true, false);
+inline sp::PID yaw_acc_pid(1e-2f, 400, 0, 45, 100, 10, 1.0f, true, false);
+// inline sp::PID yaw_acc_pid(1e-2f, 0, 0, 0, 100, 10, 1.0f, true, false);
 inline sp::PID pitch_acc_pid(1e-3f, 4700, 0, 180, 100, 10, 1.0f, true, false);
 //小陀螺补偿
 inline sp::PID yaw_spin_compensation_pid(
