@@ -70,12 +70,12 @@ void Cboard_reset(bool key1)
 {
   if (key1 && reset_count > 0) {
     reset_count--;
+    if (reset_count == 0) {
+      HAL_NVIC_SystemReset();
+    }
   }
   else {
     reset_count = 50;
-  }
-  if (reset_count == 0) {
-    HAL_NVIC_SystemReset();
   }
 }
 

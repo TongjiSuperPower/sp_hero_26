@@ -5,11 +5,23 @@
 #include "controllers/shoot_task/shoot_task.hpp"
 void chassis_send()
 {
-  wheel_lf.write(can2.tx_data);
-  wheel_rf.write(can2.tx_data);
-  wheel_lb.write(can2.tx_data);
-  wheel_rb.write(can2.tx_data);
-  can2.send(wheel_lf.tx_id);
+  static uint8_t send_count = 0;
+  send_count++;
+  if (send_count >= 2) {
+    wheel_lf.write(can2.tx_data);
+    wheel_rf.write(can2.tx_data);
+    wheel_lb.write(can2.tx_data);
+    wheel_rb.write(can2.tx_data);
+    can2.send(wheel_lf.tx_id);
+    send_count = 0;
+  }
+}
+void supercap_send()
+{
+  super_cap.write(
+    can2.tx_data, pm02.robot_status.chassis_power_limit, pm02.power_heat.buffer_energy,
+    pm02.robot_status.power_management_chassis_output);
+  can2.send(super_cap.tx_id);
 }
 void yaw_send()
 {

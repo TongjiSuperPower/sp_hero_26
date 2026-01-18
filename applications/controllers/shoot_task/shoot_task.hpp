@@ -27,6 +27,7 @@ extern uint16_t fric_targetchangeCount;
 extern bool shoot_initialFlag;
 extern float trigger_speed_target;
 extern float trigger_angle_target;
+extern bool count_flag;
 
 //弹速相关变量
 extern float initial_speed;

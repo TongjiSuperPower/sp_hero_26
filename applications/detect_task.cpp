@@ -13,9 +13,6 @@ bool trigger_motor_alive = false;
 bool pitch_motor_alive = false;
 bool fric_motor_alive = false;
 uint8_t reset_count = 50;
-//打弹颗数计数
-uint32_t shoot_count = 0;
-bool count_flag = false;
 
 extern "C" void Detect_Task()
 {
