@@ -62,7 +62,6 @@ extern "C" void Shoot_Task()
     fric_mode_control();
     trigger_mode_control();
     fric_calculate();
-    shoot_heat_cal();
     trigger_calculate();
 
     osDelay(1);
@@ -237,43 +236,6 @@ void trigger_initialcal()
   }
 }
 
-//热量计算
-void shoot_heat_cal()
-{
-  // 获取裁判系统冷却参数
-  float cooling_per_sec = (float)(pm02.robot_status.shooter_barrel_cooling_value);
-  float heat_per_shot = HEAT_PRE_SHOT;
-
-  //计算摩擦轮平均速度 (用于检测掉速)
-  last_fric_speed_avg = cur_fric_speed_avg;
-  cur_fric_speed_avg = (fabs(fric_motor1.speed) + fabs(fric_motor2.speed)) / 2.0f;
-
-  // 掉速检测
-  if (Fric_Mode == FRIC_ON && pm02.robot_status.power_management_shooter_output) {
-    if (last_fric_speed_avg - cur_fric_speed_avg > 20.0f && count_flag == false) {
-      shoot_count++;
-      cal_heat += heat_per_shot;
-      count_flag = true;
-    }
-    else {
-      count_flag = false;
-    }
-  }
-
-  // 冷却逻辑
-  if (cal_heat > 0) {
-    cal_cooling_count++;
-    if (cal_cooling_count % 100 == 99) {
-      cal_heat -= cooling_per_sec / 10.0f;  // 减去 0.1秒 的冷却量
-    }
-  }
-  if (cal_heat <= 0) {
-    cal_heat = 0;
-    shoot_count = 0;
-    cal_cooling_count = 0;
-  }
-}
-
 void shoot_permission()
 {
   if (!shoot_overFlag) {
@@ -299,7 +261,8 @@ void shoot_permission()
     }
   }
   float heat_limit = pm02.robot_status.shooter_barrel_heat_limit;
-  bool heat_ok = (cal_heat < (heat_limit - HEAT_PRE_SHOT));
+  float heat_cur = pm02.power_heat.shooter_42mm_barrel_heat;
+  bool heat_ok = (heat_cur + HEAT_PRE_SHOT < heat_limit);
 
   // SHOOT_READY 射击条件
   if (Global_Mode == REMOTE) {
