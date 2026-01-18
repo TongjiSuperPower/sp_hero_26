@@ -10,6 +10,7 @@ float a;
 float b;
 float c;
 float d;
+
 extern "C" void Control_Task()
 {
   osDelay(100);
@@ -20,6 +21,8 @@ extern "C" void Control_Task()
   yaw_motor.write_enable(can2.tx_data);
   can2.send(yaw_motor.tx_id);
   pitch_init();
+  uint32_t previous_wake_time = osKernelSysTick();
+  const uint32_t task_period_ms = 1;
   while (1) {
     global_mode_control();
     motor_enable();
@@ -32,7 +35,7 @@ extern "C" void Control_Task()
     pitch_send();
     fric_send();
     trigger_send();
-    osDelay(1);
+    osDelayUntil(&previous_wake_time, task_period_ms);
   }
 }
 

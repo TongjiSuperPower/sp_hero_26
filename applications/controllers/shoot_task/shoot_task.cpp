@@ -3,9 +3,6 @@
 #include "cmath"
 #include "cmsis_os.h"
 #include "io/imu_task.hpp"
-
-// ---------------------- 变量定义 (V1 命名风格) ----------------------
-
 // 初始化参数
 float shoot_init_time = 0.0f;
 float shoot_init_over_time = 0.0f;
@@ -54,7 +51,7 @@ float fric_speed;
 float last_fric_speed;
 
 // 函数声明
-void shoot_heat_cal();  // [新增] 软热量计算函数声明
+void shoot_heat_cal();  //软热量计算函数声明
 
 extern "C" void Shoot_Task()
 {
@@ -62,12 +59,9 @@ extern "C" void Shoot_Task()
   osDelay(200);
 
   while (1) {
-    // [修复] 不要在这里重复调用 shoot_paramInitial()，否则手动调速会被覆盖
     fric_mode_control();
     trigger_mode_control();
     fric_calculate();
-
-    // [新增] 必须先计算热量，再计算Trigger逻辑
     shoot_heat_cal();
     trigger_calculate();
 
@@ -114,7 +108,8 @@ void fric_mode_control()
     if (remote.sw_l == sp::DBusSwitchMode::UP && !last_fric_flag /*上升沿检测*/) {
       if (Fric_Mode == FRIC_DOWN || Fric_Mode == FRIC_OFF) {
         Fric_Mode = FRIC_ON;
-        first_shoot = true;  //
+        first_shoot = true;
+        trigger_angle_target = trigger_motor.angle;  // 保持当前位置
       }
       else {
         Fric_Mode = FRIC_OFF;
@@ -136,8 +131,8 @@ void fric_calculate()
   // 转速稳定后再打弹
   if (!fric_speedStablized_flag && Fric_Mode == FRIC_ON) {
     if (
-      fabs(first_speed - fric_1stSpeed_target) < 50.0f &&  // [建议] 稍微放宽判定阈值，2.0太难达到了
-      fabs(second_speed - fric_2ndSpeed_target) < 50.0f) {
+      fabs(first_speed - fric_1stSpeed_target) < 5.0f &&
+      fabs(second_speed - fric_2ndSpeed_target) < 5.0f) {
       fric_speedStablized_flag = true;
     }
   }
@@ -196,7 +191,7 @@ void trigger_mode_control()
   }
   else if (Global_Mode == REMOTE) {
     if (Fric_Mode == FRIC_ON) {
-      Trigger_Mode = SHOOT_READY;  // V1 的 Ready 状态
+      Trigger_Mode = SHOOT_READY;
     }
     if (Fric_Mode == FRIC_OFF || Fric_Mode == FRIC_DOWN) {
       Trigger_Mode = TRIGGER_DOWN;
@@ -242,7 +237,7 @@ void trigger_initialcal()
   }
 }
 
-// 软热量计算功能
+//热量计算
 void shoot_heat_cal()
 {
   // 获取裁判系统冷却参数
@@ -311,7 +306,6 @@ void shoot_permission()
     bool cur_remote_shoot = remote_shoot;
     bool remote_edge = (cur_remote_shoot && !last_remote_shoot);
     if (Fric_Mode == FRIC_ON && remote_edge && shoot_cold_time == 0 && heat_ok) {
-      // [优化] Remote模式下也建议对齐格点，防止卡弹
       if (first_shoot) {
         trigger_angle_target = trigger_near_work_position();
         first_shoot = false;

@@ -29,7 +29,7 @@ extern "C" void Gimbal_Task()
 void gimbal_paramInitialize()
 {
 #ifdef HERO_DOG
-  yaw_angle.installed = 0.4026f;
+  yaw_angle.installed = 1.2625838f;
   pitch_angle.installed = 0.37f;
 #endif
 }
@@ -40,43 +40,53 @@ void gimbal_mode_control()
     Last_Gimbal_Mode = GIMBAL_ZERO_FORCE;
     shoot_mode_flag = 0;
   }
+
   if (gimbal_InitialFlag == 1) return;
 
   if (Global_Mode == REMOTE) {
-    Last_Gimbal_Mode = Gimbal_Mode;
     Gimbal_Mode = GIMBAL_GYRO;
     shoot_mode_flag = 0;
   }
   if (Global_Mode == KEYBOARD) {
-    // Autoaim 优先级最高：只要按下 key_autoaim（右键），进入自瞄
+    // 定义一个静态变量来记录“基础模式”（是普通还是吊射）
+    static gimbal_mode Keyboard_Base_Mode = GIMBAL_GYRO;
+
+    // --- LOB 切换逻辑 ---
+    bool cur_lob = key_lob_mode;
+    bool lob_edge = (cur_lob && !last_key_lob_mode_local);
+
+    if (lob_edge) {
+      // 如果当前基础模式是吊射，就切回普通；反之切成吊射
+      if (Keyboard_Base_Mode == GIMBAL_LOB) {
+        Keyboard_Base_Mode = GIMBAL_GYRO;
+      }
+      else {
+        Keyboard_Base_Mode = GIMBAL_LOB;
+      }
+    }
+    last_key_lob_mode_local = cur_lob;
+
     if (key_autoaim) {
-      Last_Gimbal_Mode = Gimbal_Mode;
+      // 优先级最高：自瞄
+      // 这里不更新 Base_Mode，只临时覆盖 Gimbal_Mode
       Gimbal_Mode = GIMBAL_AUTO;
       shoot_mode_flag = 1;
     }
     else {
-      // LOB 模式通过 key_lob_mode 的上升沿切换（按一下切换，不需一直按着）
-      bool cur_lob = key_lob_mode;
-      bool lob_edge = (cur_lob && !last_key_lob_mode_local);
-      if (lob_edge) {
-        if (Gimbal_Mode != GIMBAL_LOB) {
-          Last_Gimbal_Mode = Gimbal_Mode;
-          Gimbal_Mode = GIMBAL_LOB;
-        }
-        else {
-          // 恢复到上一次模式
-          Gimbal_Mode = Last_Gimbal_Mode;
-        }
+      // 没有自瞄时，恢复到基础模式（可能是 GYRO 也可能是 LOB）
+      Gimbal_Mode = Keyboard_Base_Mode;
+
+      // 注意：如果是 LOB 模式，通常不应该置 0
+      if (Gimbal_Mode == GIMBAL_LOB) {
+        // 吊射时 shoot_mode_flag 保持不变或特定值
       }
       else {
-        // 非上升沿时保持当前 LOB，若不是 LOB 则执行普通键盘云台选择
-        if (Gimbal_Mode != GIMBAL_LOB) {
-          Last_Gimbal_Mode = Gimbal_Mode;
-          Gimbal_Mode = GIMBAL_GYRO;
-          shoot_mode_flag = 0;
-        }
+        shoot_mode_flag = 0;
       }
-      last_key_lob_mode_local = cur_lob;
+    }
+
+    if (Gimbal_Mode != Last_Gimbal_Mode) {
+      Last_Gimbal_Mode = Gimbal_Mode;
     }
   }
   if (Last_Gimbal_Mode == GIMBAL_ZERO_FORCE && Gimbal_Mode != GIMBAL_ZERO_FORCE) {
