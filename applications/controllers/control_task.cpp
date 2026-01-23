@@ -201,12 +201,12 @@ void fric_control()
     fricmotor6_pid.data.iout = 0.0f;
     return;
   }
-  fricmotor1_pid.calc(fric_target_speed_first+0.2, fric_motor1.speed);
-  fricmotor2_pid.calc(-(fric_target_speed_first-1), fric_motor2.speed);
-  fricmotor3_pid.calc(fric_target_speed_first+1, fric_motor3.speed);
-  fricmotor4_pid.calc(fric_target_speed_second, fric_motor4.speed);
+  fricmotor1_pid.calc(-(fric_target_speed_first), fric_motor1.speed);
+  fricmotor2_pid.calc(-(fric_target_speed_first), fric_motor2.speed);
+  fricmotor3_pid.calc(fric_target_speed_first, fric_motor3.speed);
+  fricmotor4_pid.calc(-fric_target_speed_second, fric_motor4.speed);
   fricmotor5_pid.calc(-(fric_target_speed_second+4), fric_motor5.speed);
-  fricmotor6_pid.calc(fric_target_speed_second, fric_motor6.speed);
+  fricmotor6_pid.calc(fric_target_speed_second+3, fric_motor6.speed);
 
   // fricmotor1_pid.calc(0, fric_motor1.speed);
   // fricmotor2_pid.calc(0, fric_motor2.speed);  
