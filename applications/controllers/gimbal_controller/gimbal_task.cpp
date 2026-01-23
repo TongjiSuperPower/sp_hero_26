@@ -91,7 +91,7 @@ extern "C" void Gimbal_Task()
 void gimbal_init()
 {
 #ifdef HERO_DOG
-  yaw_offecd_ecd_angle = -3.0901f;
+  yaw_offecd_ecd_angle = 2.79260731f;
   pitch_offecd_ecd_angle = 0.62146f;
 #endif
 #ifdef HERO_THREE_WHEELS

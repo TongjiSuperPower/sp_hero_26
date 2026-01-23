@@ -6,6 +6,8 @@
 #include "io/can/can.hpp"
 #include "io/vision/vision.hpp"
 
+// inline sp::LowPassFilter chassis_follow_vx_filter(0.1f);
+
 // -------------------- 控制参数 --------------------
 //计算力矩控制参数
 #ifdef HERO_DOG
@@ -16,9 +18,12 @@
 //m = 0.0977, b = 0.2987, c = 0.3370
 //m = 0.0958, b = 0.3693, c = 0.3699
 // m = 0.0970, b = 0.2166, c = 0.3488
-constexpr float YAW_INERTIA = 0.0970f;
-constexpr float YAW_DAMPING_COEFF = 0.2566f;
-constexpr float YAW_COULOMB_FORCE = 0.3488f;
+//m = 0.0412, b = 1.1673, c = 0.4899
+// m = 0.0957, b = 0.3068, c = 0.7476
+// m = 0.0922, b = 0.2150, c = 0.9411
+constexpr float YAW_INERTIA = 0.0922f;
+constexpr float YAW_DAMPING_COEFF = 0.2150f;
+constexpr float YAW_COULOMB_FORCE = 0.1411f;
 
 // m = 0.0331, b = 0.2112, c = 0.1037, d = 1.8725
 // m = 0.0349, b = 0.2383, c = 0.0796, d = 1.8778
@@ -38,5 +43,8 @@ extern float a;
 extern float b;
 extern float c;
 extern float d;
+extern float e;
+extern float f;
+extern float g;
 
 #endif

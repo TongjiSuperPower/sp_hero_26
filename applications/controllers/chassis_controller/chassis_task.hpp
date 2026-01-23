@@ -84,7 +84,7 @@ inline sp::LowPassFilter wheel_lr_filter(0.03f);
 inline sp::LowPassFilter wheel_rf_filter(0.03f);
 inline sp::LowPassFilter wheel_rr_filter(0.03f);
 //平滑底盘wz观测值
-inline sp::LowPassFilter chassis_wz_measured_filter(0.1f);
+inline sp::LowPassFilter chassis_wz_measured_filter(1.0f);
 
 inline sp::LowPassFilter correctx(0.5);
 inline sp::LowPassFilter correcty(0.5);

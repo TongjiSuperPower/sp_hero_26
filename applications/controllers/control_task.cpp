@@ -36,6 +36,9 @@ float e;
 float f;
 float g;
 
+//vyaw滤波
+
+
 void motor_enable();
 void chassis_control();
 Wheel_Torque chassis_pid_cal(float lf, float lr, float rf, float rr);
@@ -343,6 +346,7 @@ void gimbal_autoaim_control()
     gimbal_gyro_control();
     return;
   }
+  
   yaw_acc_pid.calc(yaw_target_angle, imu.yaw, vis.yaw_vel, imu.vyaw);
   auto yaw_motor_speed = imu.vyaw;
   auto yaw_torque = YAW_INERTIA * (vis.yaw_acc + yaw_acc_pid.out) +
