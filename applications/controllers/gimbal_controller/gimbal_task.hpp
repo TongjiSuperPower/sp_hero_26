@@ -63,7 +63,8 @@ extern float yaw_cmd_torque;
 extern float pitch_torque;
 extern float gravity_compensation;
 extern float servo_position;
-
+extern bool last_key_lob_mode;
+extern bool last_key_autoaim;
 extern uint16_t gimbal_init_time;
 extern uint16_t gimbal_init_over_time;
 

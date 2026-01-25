@@ -1,7 +1,8 @@
 #include "uart_task.hpp"
-#include "io/imu_task.hpp"
+
 #include "controllers/chassis_controller/chassis_task.hpp"
 #include "controllers/shoot_controller/shoot_task.hpp"
+#include "io/imu_task.hpp"
 
 // C板
 sp::UI_Manager ui_manager;
@@ -371,12 +372,12 @@ extern "C" void UART_Task()
     if (
       pm02.robot_status.robot_id ==
       (sp::referee::robot_id::BLUE_STANDARD_3 || sp::referee::robot_id::BLUE_STANDARD_4)) {
-      sentry_blood_num.set_value(pm02.game_robot_hp.blue_7_robot_hp);
+      sentry_blood_num.set_value(pm02.game_robot_hp.ally_7_robot_hp);
     }
     if (
       pm02.robot_status.robot_id ==
       (sp::referee::robot_id::RED_STANDARD_3 || sp::referee::robot_id::RED_STANDARD_4)) {
-      sentry_blood_num.set_value(pm02.game_robot_hp.red_7_robot_hp);
+      sentry_blood_num.set_value(pm02.game_robot_hp.ally_7_robot_hp);
       //哨兵低血量提示符
       // if (pm02.game_robot_hp.red_7_robot_hp < 150) {
       //   sentry_blood_warning.set_operate_type(OperateType::ADD);
@@ -390,27 +391,27 @@ extern "C" void UART_Task()
     if (
       pm02.robot_status.robot_id ==
       (sp::referee::robot_id::BLUE_STANDARD_3 || sp::referee::robot_id::BLUE_STANDARD_4)) {
-      static uint16_t last_hero_hp = pm02.game_robot_hp.red_1_robot_hp;
-      if (pm02.game_robot_hp.red_1_robot_hp != 0 && last_hero_hp == 0) {
+      static uint16_t last_hero_hp = pm02.game_robot_hp.ally_1_robot_hp;
+      if (pm02.game_robot_hp.ally_1_robot_hp != 0 && last_hero_hp == 0) {
         hero_revive_str.set_operate_type(OperateType::ADD);
       }
       else {
         hero_revive_str.set_operate_type(OperateType::DELETE);
       }
-      last_hero_hp = pm02.game_robot_hp.red_1_robot_hp;
+      last_hero_hp = pm02.game_robot_hp.ally_1_robot_hp;
     }
 
     if (
       pm02.robot_status.robot_id ==
       (sp::referee::robot_id::RED_STANDARD_3 || sp::referee::robot_id::RED_STANDARD_4)) {
-      static uint16_t last_hero_hp = pm02.game_robot_hp.blue_1_robot_hp;
-      if (pm02.game_robot_hp.blue_1_robot_hp != 0 && last_hero_hp == 0) {
+      static uint16_t last_hero_hp = pm02.game_robot_hp.ally_1_robot_hp;
+      if (pm02.game_robot_hp.ally_1_robot_hp != 0 && last_hero_hp == 0) {
         hero_revive_str.set_operate_type(OperateType::ADD);
       }
       else {
         hero_revive_str.set_operate_type(OperateType::DELETE);
       }
-      last_hero_hp = pm02.game_robot_hp.blue_1_robot_hp;
+      last_hero_hp = pm02.game_robot_hp.ally_1_robot_hp;
     }
 
     //摩擦轮转速

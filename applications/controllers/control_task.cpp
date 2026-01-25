@@ -53,6 +53,7 @@ void fric_control();
 void trigger_control();
 void shoot_init_control();
 void shoot_single_control();
+void gimbal_lobauto_control();
 
 extern "C" void Control_Task()
 {
@@ -136,6 +137,17 @@ void chassis_control()
   wheel_lr.cmd(wheel_give_torque.lr);
   wheel_rf.cmd(wheel_give_torque.rf);
   wheel_rr.cmd(wheel_give_torque.rr);
+  if(Chassis_Mode == CHASSIS_LOB)
+  {
+    // 吊射模式下底盘不允许移动
+    wheel_give_torque = chassis_pid_cal(
+    chassis_target_speed.lf, chassis_target_speed.lr, chassis_target_speed.rf,
+    chassis_target_speed.rr);
+    wheel_lf.cmd(wheel_give_torque.lf);
+  wheel_lr.cmd(wheel_give_torque.lr);
+  wheel_rf.cmd(wheel_give_torque.rf);
+  wheel_rr.cmd(wheel_give_torque.rr);
+  }
 }
 
 //底盘层面pid解算
@@ -290,6 +302,12 @@ void gimbal_control()
   if (Gimbal_Mode == GIMBAL_INIT) {
     gimbal_encode_control();
   }
+  if (Gimbal_Mode == GIMBAL_LOB) {
+    gimbal_gyro_control();
+  }
+  if (Gimbal_Mode == GIMBAL_LOB_AUTO) {
+    gimbal_lobauto_control();
+  }
 }
 
 void gimbal_gyro_control()
@@ -412,4 +430,21 @@ void shoot_data_to_computer_write(uint8_t * data, float speed, char mode)
   data[0] = (uint16_t)(speed * 1e2f) >> 8;
   data[1] = (uint16_t)(speed * 1e2f);
   data[2] = mode;
+}
+
+void gimbal_lobauto_control()
+{
+  yaw_pos_pid.calc(yaw_target_angle, imu.yaw);
+  yaw_speed_pid.calc(yaw_pos_pid.out, imu_vyaw_filter);
+  yaw_cmd_torque = sp::limit_max(yaw_speed_pid.out, MAX_4310_TORQUE);
+  yaw_motor.cmd(yaw_cmd_torque);
+  //pitch
+  pitch_pos_pid.calc(pitch_target_angle, imu.pitch);
+  // if (pitch_pos_pid.out * pitch_pos_pid.data.iout < 0) {
+  //   pitch_pos_pid.data.iout /= 3;
+  // }
+  pitch_speed_pid.calc(pitch_pos_pid.out, imu_vpitch_filter);
+  gravity_compensation = cos(OFFSET_ANGLE + imu.pitch) * TOR_PARAM;
+  pitch_torque = -pitch_speed_pid.out + gravity_compensation;
+  pitch_motor.cmd(pitch_torque);
 }

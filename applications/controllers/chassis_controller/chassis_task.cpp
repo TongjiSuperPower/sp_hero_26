@@ -117,6 +117,12 @@ extern "C" void Chassis_Task()
       chassis_speed.wz = (spin_revert_flag ? -SPIN_W : SPIN_W);
       keyboard_speedcontrol_spin();
     }
+    if(Chassis_Mode == CHASSIS_LOB)
+    {
+      chassis_speed.vx = 0.0f;
+      chassis_speed.vy = 0.0f;
+      chassis_speed.wz = 0.0f;
+    }
     // chassis_coordinate_converter(&chassis_speed, yaw_relative_angle);
     // chassis.calc(chassis_speed.vx, chassis_speed.vy, chassis_speed.wz);
     // wheel_speed.lf = wheel_lf.speed;
@@ -188,6 +194,10 @@ void chassis_mode_control()
       //SHIFT放在后面保证任何模式下按下shift都进入小陀螺
       if (key_spin) {
         Chassis_Mode = CHASSIS_SPIN;
+      }
+      if(Gimbal_Mode == GIMBAL_LOB || Gimbal_Mode == GIMBAL_LOB_AUTO)
+      {
+        Chassis_Mode = CHASSIS_LOB;
       }
     }
 #endif
