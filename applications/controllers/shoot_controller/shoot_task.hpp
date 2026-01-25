@@ -28,7 +28,7 @@ constexpr float TRIGGER_INIT_ANGLE = -2.481107f;  //rad
 
 // -------------------- SHOOT_READY_SINGLE相关 --------------------
 //每次射击冷却时间
-constexpr uint16_t SHOOT_COLD_TIME = 150;  //ms
+constexpr uint16_t SHOOT_COLD_TIME = 300;  //ms
 //每次射击拨弹轮旋转角度
 constexpr float SHOOT_ANGLE_ADD = 1.0472f;  //rad  3.1415926*2/6=1.0472
 //双发判断一次射击摩擦轮降速阈值
