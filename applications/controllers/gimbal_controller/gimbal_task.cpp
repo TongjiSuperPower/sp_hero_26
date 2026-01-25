@@ -36,8 +36,8 @@ bool last_key_lob_mode = false;
 bool last_key_autoaim = false;
 
 // LOB 模式的增量步进控制
-constexpr float LOB_YAW_STEP = 0.1f;      // yaw 每次转动的固定角度（弧度）
-constexpr float LOB_PITCH_STEP = 0.05f;   // pitch 每次转动的固定角度（弧度）
+constexpr float LOB_YAW_STEP = 0.005f;      // yaw 每次转动的固定角度（弧度）
+constexpr float LOB_PITCH_STEP = 0.001f;   // pitch 每次转动的固定角度（弧度）
 
 // 记录上一次按键状态（用于检测上升沿）
 static bool last_key_move_y_up = false;
@@ -393,7 +393,7 @@ void gimbal_cmd()
   if(Gimbal_Mode == GIMBAL_LOB_AUTO){
   
     //赋予自瞄坐标
-      yaw_target_angle = vis.yaw;
+      // yaw_target_angle = vis.yaw;
       pitch_target_angle = vis.pitch;
     }
 

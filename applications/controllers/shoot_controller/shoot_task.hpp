@@ -11,7 +11,7 @@
 constexpr float T_SHOOT = 1e-3f;  // 控制周期, 单位: s
 //摩擦轮转速rad/s
 #ifdef HERO_DOG
-constexpr float FRIC_SPEED = 325.0f;
+constexpr float FRIC_SPEED = 445.0f;//470 
 #endif
 
 #ifdef HERO_THREE_WHEELS

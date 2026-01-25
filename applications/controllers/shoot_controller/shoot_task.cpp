@@ -294,7 +294,7 @@ void fric_cmd(void)
       fric_target_speed = fric_on_speed;
     }
     //最高射速限制12：超射速摩擦轮自动降速
-    if ((initial_speed != last_initial_speed) && pm02.shoot.initial_speed > 12.0f && key_shoot) {
+    if ((initial_speed != last_initial_speed) && pm02.shoot.initial_speed > 17.0f && key_shoot) {
       fric_target_speed -= 20.0f;
       fric_target_change_flag = false;
     }
@@ -413,7 +413,7 @@ void shoot_single_permission(void)
   if (Global_Mode == REMOTE) {
     if (
       Fric_Mode == FRIC_ON && remote_shoot && single_shoot_cold_time == 0 &&
-      cal_heat < pm02.robot_status.shooter_barrel_heat_limit - HEAT_PER_SHOT) {
+      pm02.power_heat.shooter_42mm_barrel_heat < pm02.robot_status.shooter_barrel_heat_limit - HEAT_PER_SHOT) {
       if (first_shoot == true) {
         trigger_target_angle = trigger_near_work_position();
         first_shoot = false;
@@ -429,7 +429,7 @@ void shoot_single_permission(void)
     if (
       Fric_Mode == FRIC_ON &&
       (key_shoot || (vis.fire && vis.control && Gimbal_Mode == GIMBAL_AUTO)) &&
-      single_shoot_cold_time == 0 && cal_heat < pm02.robot_status.shooter_barrel_heat_limit - HEAT_PER_SHOT) {
+      single_shoot_cold_time == 0 && pm02.power_heat.shooter_42mm_barrel_heat < pm02.robot_status.shooter_barrel_heat_limit - HEAT_PER_SHOT) {
       if (first_shoot == true) {
         trigger_target_angle = trigger_near_work_position();
         first_shoot = false;
