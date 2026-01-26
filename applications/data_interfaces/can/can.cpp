@@ -22,11 +22,29 @@ void chassis_send()
 //摩擦轮和拨弹轮 CAN1（3个）
 void fric_send()
 {
-  fric_motor1.write(can1.tx_data);
-  fric_motor2.write(can1.tx_data);
-  fric_motor3.write(can1.tx_data);
-  fric_motor4.write(can1.tx_data);
-  can1.send(fric_motor1.tx_id);
+  // #ifdef HERO_DOG
+  //   fric_motor1.write(can1.tx_data);
+  //   fric_motor2.write(can1.tx_data);
+  //   can1.send(fric_motor1.tx_id);
+  // #endif
+  static uint8_t count1 = 0;
+  count1++;
+  if (count1 >= 2) {
+    fric_motor1.write(can1.tx_data);
+    fric_motor2.write(can1.tx_data);
+    fric_motor3.write(can1.tx_data);
+    fric_motor4.write(can1.tx_data);
+    can1.send(fric_motor1.tx_id);
+
+    fric_motor5.write(can1.tx_data);
+    fric_motor6.write(can1.tx_data);
+    can1.tx_data[4] = 0;
+    can1.tx_data[5] = 0;
+    can1.tx_data[6] = 0;
+    can1.tx_data[7] = 0;
+    can1.send(fric_motor5.tx_id);
+    count1 = 0;
+  }
 }
 
 void trigger_send()
@@ -49,6 +67,14 @@ void pitch_send()
   can1.send_ext(
     pitch_motor.communication_type, pitch_motor.tar_torque, pitch_motor.motor_id,
     pitch_motor.master_id);
+  can1.tx_data[0] = 0;
+  can1.tx_data[1] = 0;
+  can1.tx_data[2] = 0;
+  can1.tx_data[3] = 0;
+  can1.tx_data[4] = 0;
+  can1.tx_data[5] = 0;
+  can1.tx_data[6] = 0;
+  can1.tx_data[7] = 0;
 }
 
 void super_cap_send()

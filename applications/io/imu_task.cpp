@@ -1,10 +1,10 @@
 #include "imu_task.hpp"
 
 #include "cmsis_os.h"
+#include "controllers/shoot_controller/shoot_task.hpp"
 #include "tim.h"
 #include "tools/low_pass_filter/low_pass_filter.hpp"
 #include "tools/pid/pid.hpp"
-#include "controllers/shoot_controller/shoot_task.hpp"
 
 extern uint8_t shoot_mode_flag;
 
@@ -29,7 +29,7 @@ sp::LowPassFilter vyaw_filter(0.012f);
 sp::LowPassFilter vpitch_filter(0.015f);
 #endif
 
-#ifdef HERO_THREE_FRIC
+#ifdef HERO_SIX_FRIC
 sp::LowPassFilter gyro_0_filter(0.006f);
 //pitch
 sp::LowPassFilter gyro_1_filter(0.006f);

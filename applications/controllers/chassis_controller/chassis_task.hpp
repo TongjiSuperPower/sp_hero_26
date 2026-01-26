@@ -102,7 +102,7 @@ constexpr float CHASSIS_LENGTH = 396.2e-3f;  // m
 constexpr float CHASSIS_WIDTH = 356.47e-3f;  // m
 #endif
 
-#ifdef HERO_THREE_WHEELS
+#ifdef HERO_SIX_WHEELS
 constexpr float WHEEL_RADIUS = 77e-3f;       // m
 constexpr float CHASSIS_LENGTH = 396.2e-3f;  // m
 constexpr float CHASSIS_WIDTH = 356.47e-3f;  // m

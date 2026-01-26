@@ -415,8 +415,8 @@ extern "C" void UART_Task()
     }
 
     //摩擦轮转速
-    fric_speed_num.set_value(fric_target_speed);
-    fric_speed_num.set_operate_type(OperateType::MODIFY);
+    // fric_speed_num.set_value(fric_target_speed);
+    // fric_speed_num.set_operate_type(OperateType::MODIFY);
     //电机存活状态
     chassis_dead_str.set_operate_type(chassis_alive ? OperateType::DELETE : OperateType::ADD);
     gimbal_dead_str.set_operate_type(gimbal_alive ? OperateType::DELETE : OperateType::ADD);

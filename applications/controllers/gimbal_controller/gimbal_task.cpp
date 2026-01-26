@@ -1,6 +1,7 @@
 #include "gimbal_task.hpp"
 
 #include "cmsis_os.h"
+#include "controllers/chassis_controller/chassis_task.hpp"
 #include "controllers/keys.hpp"
 #include "controllers/mode.hpp"
 #include "controllers/shoot_controller/shoot_task.hpp"
@@ -11,7 +12,6 @@
 #include "tools/low_pass_filter/low_pass_filter.hpp"
 #include "tools/math_tools/math_tools.hpp"
 #include "tools/mecanum/mecanum.hpp"
-#include "controllers/chassis_controller/chassis_task.hpp"
 
 //上坡角度
 //pitch相对角度滤波
@@ -36,8 +36,8 @@ bool last_key_lob_mode = false;
 bool last_key_autoaim = false;
 
 // LOB 模式的增量步进控制
-constexpr float LOB_YAW_STEP = 0.005f;      // yaw 每次转动的固定角度（弧度）
-constexpr float LOB_PITCH_STEP = 0.001f;   // pitch 每次转动的固定角度（弧度）
+constexpr float LOB_YAW_STEP = 0.005f;    // yaw 每次转动的固定角度（弧度）
+constexpr float LOB_PITCH_STEP = 0.001f;  // pitch 每次转动的固定角度（弧度）
 
 // 记录上一次按键状态（用于检测上升沿）
 static bool last_key_move_y_up = false;
@@ -105,10 +105,10 @@ extern "C" void Gimbal_Task()
 void gimbal_init()
 {
 #ifdef HERO_DOG
-  yaw_offecd_ecd_angle = 2.79260731f;
+  yaw_offecd_ecd_angle = -1.971147f;
   pitch_offecd_ecd_angle = 0.62146f;
 #endif
-#ifdef HERO_THREE_WHEELS
+#ifdef HERO_SIX_WHEELS
   yaw_offecd_ecd_angle = 2.3814f;
   pitch_offecd_ecd_angle = -0.780f;
 #endif
@@ -160,7 +160,7 @@ void gimbal_init()
 //       last_key_autoaim = remote.mouse.right;
 //     }
 //     else if(!key_autoaim && last_key_autoaim){
-      
+
 //       Gimbal_Mode = Last_Gimbal_Mode;
 //       shoot_mode_flag = 0;
 //       last_key_autoaim = remote.mouse.right;
@@ -188,92 +188,91 @@ void gimbal_init()
 //     shoot_mode_flag = 0;
 //   }
 
-
 // #ifdef DUAL_PID
 //   yaw_autoaim_pos_pid.data.iout = 0.0f;
 // #endif
 // }
 void gimbal_mode_control()
 {
-    // --- 1. 定义静态变量保持状态 ---
-    // lob_enable_flag: 记录当前是否处于 LOB (吊射) 开启状态
-    static bool lob_enable_flag = 0; 
-    // last_key_lob: 用于检测按键按下瞬间
-    static bool last_key_lob = 0;
+  // --- 1. 定义静态变量保持状态 ---
+  // lob_enable_flag: 记录当前是否处于 LOB (吊射) 开启状态
+  static bool lob_enable_flag = 0;
+  // last_key_lob: 用于检测按键按下瞬间
+  static bool last_key_lob = 0;
 
-    // 正在回中过程中无法调整模式
-    if (gimbal_init_flag == 1) {
-        return;
+  // 正在回中过程中无法调整模式
+  if (gimbal_init_flag == 1) {
+    return;
+  }
+
+  // DOWN (掉电/无力模式)
+  if (Global_Mode == ZERO_FORCE) {
+    Last_Gimbal_Mode = Gimbal_Mode;
+    Gimbal_Mode = GIMBAL_ZERO_FORCE;
+    shoot_mode_flag = 0;
+  }
+
+  // 遥控器模式
+  if (Global_Mode == REMOTE) {
+    Last_Gimbal_Mode = Gimbal_Mode;
+    Gimbal_Mode = GIMBAL_GYRO;
+    shoot_mode_flag = 0;
+  }
+
+  // --- KEYBOARD 模式核心逻辑 ---
+  if (Global_Mode == KEYBOARD) {
+    // ============================================
+    // 步骤 1：检测 LOB 开关按键 (Toggle)
+    // ============================================
+    // 检测上升沿：按下的瞬间翻转标志位
+    if (key_lob_mode && !last_key_lob) {
+      lob_enable_flag = !lob_enable_flag;
     }
+    last_key_lob = key_lob_mode;  // 更新按键历史
 
-    // DOWN (掉电/无力模式)
-    if (Global_Mode == ZERO_FORCE) {
-        Last_Gimbal_Mode = Gimbal_Mode;
-        Gimbal_Mode = GIMBAL_ZERO_FORCE;
-        shoot_mode_flag = 0;
+    // ============================================
+    // 步骤 2：根据 [开关状态] + [自瞄按键] 决定最终模式
+    // ============================================
+    Last_Gimbal_Mode = Gimbal_Mode;  // 记录上一时刻模式
+
+    if (key_autoaim) {
+      // --- 按住鼠标右键 (自瞄激活) ---
+
+      if (lob_enable_flag) {
+        // 如果 LOB 开关是开的 -> 进入【吊射自瞄】
+        Gimbal_Mode = GIMBAL_LOB_AUTO;
+      }
+      else {
+        // 如果 LOB 开关是关的 -> 进入【普通自瞄】
+        Gimbal_Mode = GIMBAL_AUTO;
+      }
     }
+    else {
+      // --- 松开鼠标右键 (手动控制) ---
 
-    // 遥控器模式
-    if (Global_Mode == REMOTE) {
-        Last_Gimbal_Mode = Gimbal_Mode;
+      if (lob_enable_flag) {
+        // 如果 LOB 开关是开的 -> 回到【吊射模式】
+        Gimbal_Mode = GIMBAL_LOB;
+        // 注意：这里没有置零 shoot_mode_flag，默认吊射模式允许发射
+      }
+      else {
+        // 如果 LOB 开关是关的 -> 回到【普通陀螺仪】
         Gimbal_Mode = GIMBAL_GYRO;
+        // 普通巡逻模式下，通常为了安全会重置发射允许标志
         shoot_mode_flag = 0;
+      }
     }
+  }
 
-    // --- KEYBOARD 模式核心逻辑 ---
-    if (Global_Mode == KEYBOARD) {
-
-        // ============================================
-        // 步骤 1：检测 LOB 开关按键 (Toggle)
-        // ============================================
-        // 检测上升沿：按下的瞬间翻转标志位
-        if (key_lob_mode && !last_key_lob) {
-            lob_enable_flag = !lob_enable_flag;
-        }
-        last_key_lob = key_lob_mode; // 更新按键历史
-
-
-        // ============================================
-        // 步骤 2：根据 [开关状态] + [自瞄按键] 决定最终模式
-        // ============================================
-        Last_Gimbal_Mode = Gimbal_Mode; // 记录上一时刻模式
-
-        if (key_autoaim) {
-            // --- 按住鼠标右键 (自瞄激活) ---
-
-            if (lob_enable_flag) {
-                // 如果 LOB 开关是开的 -> 进入【吊射自瞄】
-                Gimbal_Mode = GIMBAL_LOB_AUTO;
-            } else {
-                // 如果 LOB 开关是关的 -> 进入【普通自瞄】
-                Gimbal_Mode = GIMBAL_AUTO;
-            }
-        } 
-        else {
-            // --- 松开鼠标右键 (手动控制) ---
-
-            if (lob_enable_flag) {
-                // 如果 LOB 开关是开的 -> 回到【吊射模式】
-                Gimbal_Mode = GIMBAL_LOB;
-                // 注意：这里没有置零 shoot_mode_flag，默认吊射模式允许发射
-            } else {
-                // 如果 LOB 开关是关的 -> 回到【普通陀螺仪】
-                Gimbal_Mode = GIMBAL_GYRO;
-                // 普通巡逻模式下，通常为了安全会重置发射允许标志
-                shoot_mode_flag = 0;
-            }
-        }
-    }
-
-    // 判断是否进入回中模式
-    if (Last_Gimbal_Mode == GIMBAL_ZERO_FORCE && Gimbal_Mode != GIMBAL_ZERO_FORCE) {
-        Gimbal_Mode = GIMBAL_INIT;
-        gimbal_init_flag = 1;
-        shoot_mode_flag = 0;
-    }
+  // 判断是否进入回中模式
+  if (Last_Gimbal_Mode == GIMBAL_ZERO_FORCE && Gimbal_Mode != GIMBAL_ZERO_FORCE) {
+    Gimbal_Mode = GIMBAL_INIT;
+    gimbal_init_flag = 1;
+    shoot_mode_flag = 0;
+  }
 
 #ifdef DUAL_PID
-    yaw_autoaim_pos_pid.data.iout = 0.0f;
+  yaw_autoaim_pos_pid.data.iout = 0.0f;
 #endif
 }
 
@@ -355,47 +354,47 @@ void gimbal_cmd()
         vis.pitch, IMU_PITCH_ANGLE_MIN + slope_angle, IMU_PITCH_ANGLE_MAX + slope_angle);
 #endif
     }
-
   }
 
-  if(Gimbal_Mode == GIMBAL_LOB){
+  if (Gimbal_Mode == GIMBAL_LOB) {
     // W键 - Pitch 抬起（pitch 减小）
-    if(key_move_x_up && !last_key_move_x_up){
-        pitch_target_angle -= LOB_PITCH_STEP;
+    if (key_move_x_up && !last_key_move_x_up) {
+      pitch_target_angle -= LOB_PITCH_STEP;
     }
     // S键 - Pitch 放下（pitch 增大）
-    if(key_move_x_down && !last_key_move_x_down){
-        pitch_target_angle += LOB_PITCH_STEP;
+    if (key_move_x_down && !last_key_move_x_down) {
+      pitch_target_angle += LOB_PITCH_STEP;
     }
     // A键 - Yaw 左转
-    if(key_move_y_up && !last_key_move_y_up){
-        yaw_target_angle += LOB_YAW_STEP;
+    if (key_move_y_up && !last_key_move_y_up) {
+      yaw_target_angle += LOB_YAW_STEP;
     }
     // D键 - Yaw 右转
-    if(key_move_y_down && !last_key_move_y_down){
-        yaw_target_angle -= LOB_YAW_STEP;
+    if (key_move_y_down && !last_key_move_y_down) {
+      yaw_target_angle -= LOB_YAW_STEP;
     }
-    
+
     // 更新上一次按键状态
     last_key_move_x_up = key_move_x_up;
     last_key_move_x_down = key_move_x_down;
     last_key_move_y_up = key_move_y_up;
     last_key_move_y_down = key_move_y_down;
-    
-    // 应用角度限制
-    #ifdef RMUL
-    pitch_target_angle = sp::limit_min_max(pitch_target_angle, IMU_PITCH_ANGLE_MIN, IMU_PITCH_ANGLE_MAX);
-    #endif
-    #ifdef RMUC
-    pitch_target_angle = sp::limit_min_max(pitch_target_angle, IMU_PITCH_ANGLE_MIN + slope_angle, IMU_PITCH_ANGLE_MAX + slope_angle);
-    #endif
-}
-  if(Gimbal_Mode == GIMBAL_LOB_AUTO){
-  
+
+// 应用角度限制
+#ifdef RMUL
+    pitch_target_angle =
+      sp::limit_min_max(pitch_target_angle, IMU_PITCH_ANGLE_MIN, IMU_PITCH_ANGLE_MAX);
+#endif
+#ifdef RMUC
+    pitch_target_angle = sp::limit_min_max(
+      pitch_target_angle, IMU_PITCH_ANGLE_MIN + slope_angle, IMU_PITCH_ANGLE_MAX + slope_angle);
+#endif
+  }
+  if (Gimbal_Mode == GIMBAL_LOB_AUTO) {
     //赋予自瞄坐标
-      // yaw_target_angle = vis.yaw;
-      pitch_target_angle = vis.pitch;
-    }
+    // yaw_target_angle = vis.yaw;
+    pitch_target_angle = vis.pitch;
+  }
 
   if (Gimbal_Mode == GIMBAL_INIT) {
     yaw_target_angle = 0.0f;

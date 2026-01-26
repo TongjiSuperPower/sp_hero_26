@@ -224,21 +224,43 @@ void motor_enable(void)
 //摩擦轮控制
 void fric_control()
 {
-  if (Fric_Mode == FRIC_DOWN || !pm02.robot_status.power_management_shooter_output) {
+  if (Fric_Mode == FRIC_DOWN) {
     fric_motor1.cmd(0.0f);
     fric_motor2.cmd(0.0f);
+    fric_motor3.cmd(0.0f);
+    fric_motor4.cmd(0.0f);
+    fric_motor5.cmd(0.0f);
+    fric_motor6.cmd(0.0f);
     fricmotor1_pid.data.iout = 0.0f;
     fricmotor2_pid.data.iout = 0.0f;
     fricmotor3_pid.data.iout = 0.0f;
+    fricmotor4_pid.data.iout = 0.0f;
+    fricmotor5_pid.data.iout = 0.0f;
+    fricmotor6_pid.data.iout = 0.0f;
     return;
   }
-  fricmotor1_pid.calc(-fric_target_speed, fric_motor1.speed);
-  fricmotor2_pid.calc(fric_target_speed, fric_motor2.speed);
-  fricmotor3_pid.calc(fric_target_speed, fric_motor3.speed);
+  else {
+    fricmotor1_pid.calc(-(fric_target_speed_first), fric_motor1.speed);
+    fricmotor2_pid.calc(-(fric_target_speed_first), fric_motor2.speed);
+    fricmotor3_pid.calc(fric_target_speed_first, fric_motor3.speed);
+    fricmotor4_pid.calc(-(fric_target_speed_second), fric_motor4.speed);
+    fricmotor5_pid.calc(-(fric_target_speed_second), fric_motor5.speed);
+    fricmotor6_pid.calc(fric_target_speed_second, fric_motor6.speed);
+  }
+
+  // fricmotor1_pid.calc(0, fric_motor1.speed);
+  // fricmotor2_pid.calc(0, fric_motor2.speed);
+  // fricmotor3_pid.calc(0, fric_motor3.speed);
+  // fricmotor4_pid.calc(fric_target_speed_second, fric_motor4.speed);
+  // fricmotor5_pid.calc(-(fric_target_speed_second+4), fric_motor5.speed);
+  // fricmotor6_pid.calc(fric_target_speed_second, fric_motor6.speed);
 
   fric_motor1.cmd(fricmotor1_pid.out);
   fric_motor2.cmd(fricmotor2_pid.out);
   fric_motor3.cmd(fricmotor3_pid.out);
+  fric_motor4.cmd(fricmotor4_pid.out);
+  fric_motor5.cmd(fricmotor5_pid.out);
+  fric_motor6.cmd(fricmotor6_pid.out);
 }
 
 void trigger_control()

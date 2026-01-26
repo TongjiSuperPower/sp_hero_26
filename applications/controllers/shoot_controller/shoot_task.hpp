@@ -11,7 +11,9 @@
 constexpr float T_SHOOT = 1e-3f;  // 控制周期, 单位: s
 //摩擦轮转速rad/s
 #ifdef HERO_DOG
-constexpr float FRIC_SPEED = 445.0f;//470 
+constexpr float FRIC_SPEED = 540.0f;         //摩擦轮转速
+constexpr float FRIC_SPEED_FRIST = 500.0f;////685.0f;//640.0f;//600.0f;   //前级摩擦轮转速
+constexpr float FRIC_SPEED_SECOND = 565.0f;//510.0f;//530.0f;//540.0f;  //后级摩擦轮转速
 #endif
 
 #ifdef HERO_THREE_WHEELS
@@ -48,12 +50,16 @@ inline sp::RM_Motor fric_motor1(1, sp::RM_Motors::M3508, 1);
 inline sp::RM_Motor fric_motor2(2, sp::RM_Motors::M3508, 1);
 inline sp::RM_Motor fric_motor3(3, sp::RM_Motors::M3508, 1);
 inline sp::RM_Motor fric_motor4(4, sp::RM_Motors::M3508, 1);
+inline sp::RM_Motor fric_motor5(5, sp::RM_Motors::M3508, 1);
+inline sp::RM_Motor fric_motor6(6, sp::RM_Motors::M3508, 1);
 
 // -------------------- 对外接口 --------------------
 extern uint8_t shoot_mode_flag;
 //发送给拨弹轮的扭矩（用于判断拨弹轮是否堵转）
 extern float trigger_give_torque;
 
+extern float fric_target_speed_first;
+extern float fric_target_speed_second;
 extern float fric_target_speed;
 extern float aim_trigger_speed_before;
 extern float trigger_target_speed;

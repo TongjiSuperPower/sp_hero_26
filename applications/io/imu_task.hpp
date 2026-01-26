@@ -2,13 +2,13 @@
 #define IMU_TASK_HPP
 #include "A_HERO_SELECTION.hpp"
 #include "calibrate_task.hpp"
+#include "controllers/detect_task.hpp"
 #include "io/bmi088/bmi088.hpp"
+#include "io/vision/vision.hpp"
+#include "stdint.h"
 #include "tools/low_pass_filter/low_pass_filter.hpp"
 #include "tools/mahony/mahony.hpp"
 #include "tools/pid/pid.hpp"
-#include "stdint.h"
-#include "io/vision/vision.hpp"
-#include "controllers/detect_task.hpp"
 
 extern sp::BMI088 bmi088;
 extern sp::Mahony imu;
@@ -34,7 +34,7 @@ constexpr float GyroZZero = 0.000081818027f;
 
 #endif
 
-#ifdef HERO_THREE_FRIC
+#ifdef HERO_SIX_FRIC
 
 constexpr float GyroXZero = -0.0062657f;
 constexpr float GyroYZero = -0.0010400f;

@@ -22,7 +22,7 @@ constexpr float MAX_XIAOMI_TORQUE = 12.0f;  // 小米电机最大扭矩，单位
 
 #ifdef HERO_DOG
 //位置控制PID
-inline sp::PID yaw_pos_pid(T_CONTROL, 30.0f, 0.0f, 0.3f, 7, 3, 1.0f, true, false);
+inline sp::PID yaw_pos_pid(T_CONTROL, 20.0f, 0.0f, 0.3f, 7, 3, 1.0f, true, false);
 inline sp::PID yaw_speed_pid(
   T_CONTROL, 2.0f, 0.0f, 0.25f, MAX_4310_TORQUE, MAX_4310_TORQUE / 3.0f, 1.0f, false, false);
 
@@ -71,9 +71,13 @@ inline sp::PID triggerback_speed_pid2(
   T_CONTROL, 0.53f, 0.0f, 0.002f, MAX_4310_TORQUE, MAX_4310_TORQUE / 3.0f, 1, false, true);
 
 //摩擦轮3508单环速度环PID
-inline sp::PID fricmotor1_pid(T_CONTROL, 0.0032f, 0.0f, 0.000001f, 0.34, 0.1, 0.8);
-inline sp::PID fricmotor2_pid(T_CONTROL, 0.0032f, 0.0f, 0.000001f, 0.34, 0.1, 0.8);
-inline sp::PID fricmotor3_pid(T_CONTROL, 0.0032f, 0.0f, 0.000001f, 0.34, 0.1, 0.8);
+//摩擦轮3508单环速度环PID
+inline sp::PID fricmotor1_pid(T_CONTROL, 0.0005f, 0.0f, 0.000001f, 0.34, 0.1, 0.8);
+inline sp::PID fricmotor2_pid(T_CONTROL, 0.0005f, 0.0f, 0.000001f, 0.34, 0.1, 0.8);
+inline sp::PID fricmotor3_pid(T_CONTROL, 0.0005f, 0.0f, 0.000001f, 0.34, 0.1, 0.8);
+inline sp::PID fricmotor4_pid(T_CONTROL, 0.0005f, 0.0f, 0.000001f, 0.34, 0.1, 0.8);
+inline sp::PID fricmotor5_pid(T_CONTROL, 0.0005f, 0.0f, 0.000001f, 0.34, 0.1, 0.8);
+inline sp::PID fricmotor6_pid(T_CONTROL, 0.0005f, 0.0f, 0.000001f, 0.34, 0.1, 0.8);
 #endif
 
 #endif

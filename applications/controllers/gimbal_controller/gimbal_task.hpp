@@ -2,13 +2,13 @@
 #define GIMBAL_TASK_HPP
 #include "A_HERO_SELECTION.hpp"
 #include "controllers/pids.hpp"
+#include "io/servo/servo.hpp"
 #include "io/vision/vision.hpp"
+#include "motor/cybergear_motor/cybergear_motor.hpp"
 #include "motor/dm_motor/dm_motor.hpp"
 #include "motor/rm_motor/rm_motor.hpp"
 #include "tools/pid/pid.hpp"
 #include "tools/yaw_feedward/yaw_feedward.hpp"
-#include "motor/cybergear_motor/cybergear_motor.hpp"
-#include "io/servo/servo.hpp"
 
 // -------------------- 控制参数 --------------------
 constexpr float T_GIMBAL = 1e-3;
@@ -22,7 +22,7 @@ constexpr float IMU_PITCH_ANGLE_MAX = 0.25f;   //Pitch轴限位    最大角度0
 constexpr float IMU_PITCH_ANGLE_MIN = -0.50f;  //Pitch轴限位    最小角度-0.25
 #endif
 
-#ifdef HERO_THREE_WHEELS
+#ifdef HERO_SIX_WHEELS
 //遥控器模式云台数据
 constexpr float W_MAX = 0.004f;  //rad/ms
 
@@ -42,7 +42,7 @@ constexpr float TOR_PARAM = 1.5f;
 // 重心偏角
 constexpr float OFFSET_ANGLE = 0.0f;  // rad
 #endif
-#ifdef HERO_THREE_WHEELS
+#ifdef HERO_SIX_WHEELS
 constexpr float TOR_PARAM = 1.4517f;
 //重心偏角
 constexpr float OFFSET_ANGLE = 0.0f;  // rad
@@ -50,8 +50,10 @@ constexpr float OFFSET_ANGLE = 0.0f;  // rad
 
 // -------------------- 对外硬件 --------------------
 inline sp::DM_Motor yaw_motor(0x08, 0x04, 3.141593f, 30.0f, 10.0f);
-inline sp::CyberGear_Motor pitch_motor(Master_CAN_ID, CyberGear_CAN_ID, CYBERGEAR_MAX_POSITION, CYBERGEAR_MAX_SPEED, CYBERGEAR_MAX_TORQUE);
-inline sp::Servo servo(&htim1, TIM_CHANNEL_1, 168e6f, 270.0f); // 开发板最上面的PWM端口, 270度舵机
+inline sp::CyberGear_Motor pitch_motor(
+  0x06, 0x00, CYBERGEAR_MAX_POSITION, CYBERGEAR_MAX_SPEED,
+  CYBERGEAR_MAX_TORQUE);
+inline sp::Servo servo(&htim1, TIM_CHANNEL_1, 168e6f, 270.0f);  // 开发板最上面的PWM端口, 270度舵机
 
 // -------------------- 对外调试 --------------------
 extern float yaw_offecd_ecd_angle;
