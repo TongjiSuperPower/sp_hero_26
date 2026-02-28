@@ -39,6 +39,9 @@ bool last_key_autoaim = false;
 constexpr float LOB_YAW_STEP = 0.005f;    // yaw 每次转动的固定角度（弧度）
 constexpr float LOB_PITCH_STEP = 0.001f;  // pitch 每次转动的固定角度（弧度）
 
+// 遥控器摇杆死区阈值（绝对值低于此值时忽略输入）
+constexpr float REMOTE_DEADZONE = 0.05f;  // 根据需要调整
+
 // 记录上一次按键状态（用于检测上升沿）
 static bool last_key_move_y_up = false;
 static bool last_key_move_y_down = false;
@@ -287,10 +290,15 @@ void gimbal_cmd()
   if (Gimbal_Mode == GIMBAL_GYRO) {
     //遥控器
     if (Global_Mode == REMOTE) {
-      gyro_yaw_angle_add = -remote_yaw * W_MAX;
-      gyro_pitch_angle_add = -remote_pitch * W_MAX;
-      yaw_target_angle = sp::limit_angle(yaw_target_angle + gyro_yaw_angle_add);
-      pitch_target_angle = sp::limit_angle(pitch_target_angle + gyro_pitch_angle_add);
+      // 添加遥控器摇杆死区：只有超过阈值才叠加角度
+      if (fabs(remote_yaw) > REMOTE_DEADZONE) {
+        gyro_yaw_angle_add = -remote_yaw * W_MAX;
+        yaw_target_angle = sp::limit_angle(yaw_target_angle + gyro_yaw_angle_add);
+      }
+      if (fabs(remote_pitch) > REMOTE_DEADZONE) {
+        gyro_pitch_angle_add = -remote_pitch * W_MAX;
+        pitch_target_angle = sp::limit_angle(pitch_target_angle + gyro_pitch_angle_add);
+      }
       //pitch轴限角
 #ifdef RMUL
       pitch_target_angle =
