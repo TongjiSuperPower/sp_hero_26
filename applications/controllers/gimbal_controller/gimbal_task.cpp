@@ -30,7 +30,7 @@ uint16_t turnover_cold_time = TURNOVER_COLDTIME;
 uint8_t shoot_mode_flag = 0;
 
 //舵机位置控制
-float servo_position;
+float servo_position = 135.0f;  // 初始位置为0度
 
 bool last_key_lob_mode = false;
 bool last_key_autoaim = false;
@@ -115,6 +115,9 @@ void gimbal_init()
   yaw_offecd_ecd_angle = 2.3814f;
   pitch_offecd_ecd_angle = -0.780f;
 #endif
+  // 启动舵机PWM
+  servo.start();
+  servo.set(servo_position);
 }
 
 //云台状态选择
@@ -430,14 +433,15 @@ void servo_cmd()
 
   // 按住C键时，检测Q键按下边缘（从未按下到按下的瞬间）
   if (remote.keys.c && remote.keys.q && !last_key_q) {
-    servo_position += 2.0f;  // 增加一个小角度
+    servo_position = sp::limit_min_max(servo_position + 2.0f, 0.0f, 270.0f); // 增加一个小角度
   }
   // 按住C键时，检测E键按下边缘（从未按下到按下的瞬间）
   else if (remote.keys.c && remote.keys.e && !last_key_e) {
-    servo_position -= 2.0f;  // 减少一个小角度
+    servo_position = sp::limit_min_max(servo_position - 2.0f, 0.0f, 270.0f);  // 减少一个小角度
   }
 
   // 更新上一次的按键状态
   last_key_q = remote.keys.q;
   last_key_e = remote.keys.e;
+
 }

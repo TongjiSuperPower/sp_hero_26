@@ -53,7 +53,7 @@ inline sp::DM_Motor yaw_motor(0x08, 0x04, 3.141593f, 30.0f, 10.0f);
 inline sp::CyberGear_Motor pitch_motor(
   0x06, 0x00, CYBERGEAR_MAX_POSITION, CYBERGEAR_MAX_SPEED,
   CYBERGEAR_MAX_TORQUE);
-inline sp::Servo servo(&htim1, TIM_CHANNEL_1, 168e6f, 270.0f);  // 开发板最上面的PWM端口, 270度舵机
+inline sp::Servo servo(&htim1, TIM_CHANNEL_2, 168e6f, 270.0f);  // 开发板最上面的PWM端口, 270度舵机
 
 // -------------------- 对外调试 --------------------
 extern float yaw_offecd_ecd_angle;
