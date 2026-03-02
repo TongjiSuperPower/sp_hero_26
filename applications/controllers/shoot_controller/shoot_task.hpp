@@ -13,7 +13,7 @@ constexpr float T_SHOOT = 1e-3f;  // 控制周期, 单位: s
 #ifdef HERO_DOG
 constexpr float FRIC_SPEED = 540.0f;         //摩擦轮转速
 constexpr float FRIC_SPEED_FRIST = 500.0f;////685.0f;//640.0f;//600.0f;   //前级摩擦轮转速
-constexpr float FRIC_SPEED_SECOND = 565.0f;//510.0f;//530.0f;//540.0f;  //后级摩擦轮转速
+constexpr float FRIC_SPEED_SECOND = 550.0f;//510.0f;//530.0f;//540.0f;  //后级摩擦轮转速//565
 #endif
 
 #ifdef HERO_THREE_WHEELS
@@ -30,7 +30,7 @@ constexpr float TRIGGER_INIT_ANGLE = -2.481107f;  //rad
 
 // -------------------- SHOOT_READY_SINGLE相关 --------------------
 //每次射击冷却时间
-constexpr uint16_t SHOOT_COLD_TIME = 300;  //ms
+constexpr uint16_t SHOOT_COLD_TIME = 500;  //ms
 //每次射击拨弹轮旋转角度
 constexpr float SHOOT_ANGLE_ADD = 1.0472f;  //rad  3.1415926*2/6=1.0472
 //双发判断一次射击摩擦轮降速阈值

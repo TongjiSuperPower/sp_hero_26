@@ -47,7 +47,7 @@ uint32_t stuck_count = 0;
 //C板重置
 void Cboard_reset(bool key1);
 //拨弹轮堵转检测函数
-bool trigger_motor_block(void);
+// bool trigger_motor_block(void);
 //电机掉线检测函数
 void motor_dead();
 // 射击次数计数
@@ -63,7 +63,7 @@ extern "C" void Detect_Task()
     Cboard_reset(remote.keys.g);
 #endif
     //拨弹轮堵转检测
-    trigger_block_flag = trigger_motor_block();
+    // trigger_block_flag = trigger_motor_block();
     //电机掉线检测
     motor_dead();
     osDelay(10);
@@ -124,27 +124,27 @@ void motor_dead()
   motor_alive = chassis_alive && gimbal_alive && shoot_alive;
 }
 
-bool trigger_motor_block(void)
-{
-  //记录上一次拨弹轮速度
-  float v_trigger_before = trigger_motor.speed;
-  if (!trigger_block_flag) {
-    if (
-      fabs(trigger_give_torque) > 0.9f &&
-      fabs((v_trigger_before + trigger_motor.speed) / 2.0f) < 0.5f) {
-      trigger_num++;
-    }
-    else {
-      trigger_num = 0;
-    }
-  }
-//堵转判断
-#ifdef HERO_DOG
-  if (trigger_num > 25) {
-    trigger_num = 0;
-    return false;
-    // return true;
-  }
-  return false;
-#endif
-}
+// bool trigger_motor_block(void)
+// {
+//   //记录上一次拨弹轮速度
+//   float v_trigger_before = trigger_motor.speed;
+//   if (!trigger_block_flag) {
+//     if (
+//       fabs(trigger_give_torque) > 0.9f &&
+//       fabs((v_trigger_before + trigger_motor.speed) / 2.0f) < 0.5f) {
+//       trigger_num++;
+//     }
+//     else {
+//       trigger_num = 0;
+//     }
+//   }
+// //堵转判断
+// #ifdef HERO_DOG
+//   if (trigger_num > 25) {
+//     trigger_num = 0;
+//     return false;
+//     // return true;
+//   }
+//   return false;
+// #endif
+// }
