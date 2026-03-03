@@ -35,17 +35,24 @@ inline sp::PID yaw_encode_pos_pid(T_CONTROL, 10.0f, 0.0f, 0.45f, 3, 1.5, 1.0f, t
 inline sp::PID yaw_encode_speed_pid(
   T_CONTROL, 1.5f, 0.0f, 0.12f, MAX_4310_TORQUE, MAX_4310_TORQUE / 3.0f, 1.0, false, false);
 
-inline sp::PID pitch_encode_pos_pid(T_CONTROL, 30.0f, 10.0f, 0.0f, 5, 0.8, 1.0f, true, false);
+inline sp::PID pitch_encode_pos_pid(T_CONTROL, 1.0f, 0.0f, 0.0f, 5, 0.8, 1.0f, true, false);
 inline sp::PID pitch_encode_speed_pid(
   T_CONTROL, 0.2f, 0.0f, 0.0f, MAX_XIAOMI_TORQUE, 0.1, 1.0f, false, false);
 
+inline sp::PID yaw_pos_lob_pid(T_CONTROL, 20.0f, 0.0f, 0.3f, 7, 3, 1.0f, true, false);
+inline sp::PID yaw_speed_lob_pid(
+  T_CONTROL, 2.0f, 0.0f, 0.25f, MAX_4310_TORQUE, MAX_4310_TORQUE / 3.0f, 1.0f, false, false);
+
+inline sp::PID pitch_pos_lob_pid(T_CONTROL, 100.0f, 180.0f, 4.1f, 6, 5.4, 1.0f, true, false);
+inline sp::PID pitch_speed_lob_pid(
+  T_CONTROL, 1.8f, 0.0f, 0.0f, MAX_XIAOMI_TORQUE, 0.2, 1.0f, false, false);//0.6
 #ifdef MPC
 inline sp::PID yaw_vel_pid(1e-3f, 1, 0, 0, 100, 0, 1.0f, true, false);
 inline sp::PID pitch_vel_pid(1e-3f, 1, 0, 0, 100, 0, 1.0f, true, false);
 // inline sp::PID yaw_acc_pid(1e-3f, 3000, 0, 100, 100, 30, 1.0f, true, false);
 // inline sp::PID yaw_acc_pid(1e-2f, 0, 0, 0, 100, 10, 1.0f, true, false);
 // inline sp::PID yaw_acc_pid(1e-3f, 3300, 30000, 95, 100, 80, 1.0f, true, false);
-inline sp::PID yaw_acc_pid(1e-3f, 400,700,40, 100, 80, 1.0f, true, false);
+inline sp::PID yaw_acc_pid(1e-3f, 400, 700, 40, 100, 80, 1.0f, true, false);
 inline sp::PID pitch_acc_pid(1e-3f, 4700, 0, 180, 100, 10, 1.0f, true, false);
 //小陀螺补偿
 inline sp::PID yaw_spin_compensation_pid(

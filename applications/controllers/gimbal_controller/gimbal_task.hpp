@@ -18,8 +18,8 @@ constexpr float T_GIMBAL = 1e-3;
 constexpr float W_MAX = 0.004f;  //rad/ms
 
 //pitch向上为负
-constexpr float IMU_PITCH_ANGLE_MAX = 0.25f;   //Pitch轴限位    最大角度0.50
-constexpr float IMU_PITCH_ANGLE_MIN = -0.50f;  //Pitch轴限位    最小角度-0.25
+constexpr float IMU_PITCH_ANGLE_MAX = 0.15f;   //Pitch轴限位    最大角度0.50
+constexpr float IMU_PITCH_ANGLE_MIN = -0.64f;  //Pitch轴限位    最小角度-0.25
 #endif
 
 #ifdef HERO_SIX_WHEELS

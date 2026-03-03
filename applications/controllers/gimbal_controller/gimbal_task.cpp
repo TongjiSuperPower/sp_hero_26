@@ -404,7 +404,16 @@ void gimbal_cmd()
   if (Gimbal_Mode == GIMBAL_LOB_AUTO) {
     //赋予自瞄坐标
     // yaw_target_angle = vis.yaw;
-    pitch_target_angle = vis.pitch;
+
+    // 添加pitch轴限角（确保视觉目标在有效范围内）
+#ifdef RMUL
+    pitch_target_angle =
+      sp::limit_min_max(pitch_target_angle, IMU_PITCH_ANGLE_MIN, IMU_PITCH_ANGLE_MAX);
+#endif
+#ifdef RMUC
+    pitch_target_angle = sp::limit_min_max(
+      vis.pitch, IMU_PITCH_ANGLE_MIN + slope_angle, IMU_PITCH_ANGLE_MAX + slope_angle);
+#endif
   }
 
   if (Gimbal_Mode == GIMBAL_INIT) {

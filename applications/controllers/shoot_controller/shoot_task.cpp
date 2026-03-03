@@ -300,7 +300,7 @@ void fric_cmd(void)
       fric_target_speed_second = fric_on_speed_second;
     }
     //最高射速限制12：超射速摩擦轮自动降速
-    if ((initial_speed != last_initial_speed) && pm02.shoot.initial_speed > 12.0f && key_shoot) {
+    if ((initial_speed != last_initial_speed) && pm02.shoot.initial_speed > 17.0f && key_shoot) {
       fric_target_speed_first -= 20.0f;
       fric_target_speed_second -= 20.0f;
       fric_target_change_flag = false;

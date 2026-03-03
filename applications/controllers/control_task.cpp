@@ -456,17 +456,17 @@ void shoot_data_to_computer_write(uint8_t * data, float speed, char mode)
 
 void gimbal_lobauto_control()
 {
-  yaw_pos_pid.calc(yaw_target_angle, imu.yaw);
-  yaw_speed_pid.calc(yaw_pos_pid.out, imu_vyaw_filter);
-  yaw_cmd_torque = sp::limit_max(yaw_speed_pid.out, MAX_4310_TORQUE);
+  yaw_pos_lob_pid.calc(yaw_target_angle, imu.yaw);
+  yaw_speed_lob_pid.calc(yaw_pos_lob_pid.out, imu_vyaw_filter);
+  yaw_cmd_torque = sp::limit_max(yaw_speed_lob_pid.out, MAX_4310_TORQUE);
   yaw_motor.cmd(yaw_cmd_torque);
   //pitch
-  pitch_pos_pid.calc(pitch_target_angle, imu.pitch);
+  pitch_pos_lob_pid.calc(pitch_target_angle, imu.pitch);
   // if (pitch_pos_pid.out * pitch_pos_pid.data.iout < 0) {
   //   pitch_pos_pid.data.iout /= 3;
   // }
-  pitch_speed_pid.calc(pitch_pos_pid.out, imu_vpitch_filter);
+  pitch_speed_lob_pid.calc(pitch_pos_lob_pid.out, imu_vpitch_filter);
   gravity_compensation = cos(OFFSET_ANGLE + imu.pitch) * TOR_PARAM;
-  pitch_torque = -pitch_speed_pid.out + gravity_compensation;
+  pitch_torque = -pitch_speed_lob_pid.out + gravity_compensation;
   pitch_motor.cmd(pitch_torque);
 }
