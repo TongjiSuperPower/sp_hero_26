@@ -93,7 +93,7 @@ void shoot_mode_init(void)
   fric_target_speed_first = FRIC_SPEED_FRIST;
   fric_target_speed_second = FRIC_SPEED_SECOND;
   for (int i = 0; i < 6; i++) {
-    trigger_work_position[i] = sp::limit_angle(TRIGGER_INIT_ANGLE + i * sp::PI / 3);
+    trigger_work_position[i] = sp::limit_angle(TRIGGER_INIT_ANGLE + i * sp::SP_PI / 3);
   }
 }
 
@@ -382,7 +382,7 @@ void shoot_init_cmd(void)
 //计算负方向离拨盘最近的工作位置
 float trigger_near_work_position(void)
 {
-  float min_distance = sp::PI / 3;
+  float min_distance = sp::SP_PI / 3;
   float target_position = trigger_motor.angle;
   for (int i = 0; i < 6; i++) {
     float distance = trigger_motor.angle - trigger_work_position[i];
@@ -431,7 +431,7 @@ void shoot_single_permission(void)
         first_shoot = false;
       }
       else {
-        trigger_target_angle = sp::limit_angle(trigger_target_angle - sp::PI / 3);
+        trigger_target_angle = sp::limit_angle(trigger_target_angle - sp::SP_PI / 3);
       }
       single_shoot_cold_time = SHOOT_COLD_TIME;
       single_shoot_over_flag = false;
@@ -447,7 +447,7 @@ void shoot_single_permission(void)
         first_shoot = false;
       }
       else {
-        trigger_target_angle = sp::limit_angle(trigger_target_angle - sp::PI / 3);
+        trigger_target_angle = sp::limit_angle(trigger_target_angle - sp::SP_PI / 3);
       }
       single_shoot_cold_time = SHOOT_COLD_TIME;
       single_shoot_over_flag = false;

@@ -38,7 +38,7 @@ bool key_fric_down;
 bool key_fric_up;
 
 extern "C" void Keys_Task()
-{ 
+{
   while (1) {
 #ifdef VT03
     //遥控端
@@ -87,7 +87,18 @@ extern "C" void Keys_Task()
     remote_move_y = remote.ch_lh;
     remote_move_x = remote.ch_lv;
     //云台
-    remote_yaw = remote.ch_rh;
+    if (remote.ch_rh > RC_DEADZONE) {
+      // 正向死区外：把 (RC_DEADZONE ~ 1.0) 映射到 (0.0 ~ 1.0)
+      remote_yaw = (remote.ch_rh - RC_DEADZONE) / (1.0 - RC_DEADZONE);
+    }
+    else if (remote.ch_rh < -RC_DEADZONE) {
+      // 反向死区外：把 (-RC_DEADZONE ~ -1.0) 映射到 (0.0 ~ -1.0)
+      remote_yaw = (remote.ch_rh + RC_DEADZONE) / (1.0 - RC_DEADZONE);
+    }
+    else {
+      // 死区内：输出 0
+      remote_yaw = 0.0;
+    }
     remote_pitch = remote.ch_rv;
     //射击
     remote_shoot = (remote.sw_l == sp::DBusSwitchMode::DOWN);

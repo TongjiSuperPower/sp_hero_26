@@ -325,16 +325,16 @@ void gimbal_cmd()
         turnover_cold_time--;
       }
       if (key_yaw_left_90 && turnover_cold_time == 0 && !remote.keys.c) {
-        yaw_target_angle += sp::PI / 2;
+        yaw_target_angle += sp::SP_PI / 2;
         turnover_cold_time = TURNOVER_COLDTIME;
       }
       if (key_yaw_right_90 && turnover_cold_time == 0 && !remote.keys.c) {
-        yaw_target_angle += -sp::PI / 2;
+        yaw_target_angle += -sp::SP_PI / 2;
         turnover_cold_time = TURNOVER_COLDTIME;
       }
       //按下X回头
       if (key_yaw_180 && turnover_cold_time == 0) {
-        yaw_target_angle += sp::PI;
+        yaw_target_angle += sp::SP_PI;
         turnover_cold_time = TURNOVER_COLDTIME;
       }
       //pitch轴限角

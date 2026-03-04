@@ -7,6 +7,7 @@ cmake_minimum_required(VERSION 3.22)
 # User is free to modify the file as much as necessary
 #
 
+
 # Setup compiler settings
 set(CMAKE_C_STANDARD 11)
 set(CMAKE_C_STANDARD_REQUIRED ON)
@@ -88,6 +89,7 @@ target_sources(${CMAKE_PROJECT_NAME} PRIVATE
     sp_middleware/io/vision/vision.cpp
     sp_middleware/referee/vt03/vt03.cpp
     sp_middleware/io/servo/servo.cpp
+    sp_middleware/tools/gimbal/gimbal.cpp
 
 )
 
