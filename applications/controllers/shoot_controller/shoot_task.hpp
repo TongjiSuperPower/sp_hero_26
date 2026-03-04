@@ -26,7 +26,7 @@ constexpr float TRIGGER_BACK_ANGLE = 0.6f;  //rad
 //拨弹轮双发反转角度
 constexpr float TRIGGER_SINGLE_BACK_ANGLE = 0.4f;  //rad
 //拨弹轮复位角度
-constexpr float TRIGGER_INIT_ANGLE = -2.481107f;  //rad
+constexpr float TRIGGER_INIT_ANGLE = -3.04916883f;  //rad
 
 // -------------------- SHOOT_READY_SINGLE相关 --------------------
 //每次射击冷却时间

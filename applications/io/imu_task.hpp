@@ -28,9 +28,9 @@ void imu_temp_control(float temp);
 
 #ifdef HERO_DOG
 
-constexpr float GyroXZero = 0.00620746519f;
-constexpr float GyroYZero = -0.00352368597f;
-constexpr float GyroZZero = 0.000081818027f;
+constexpr float GyroXZero = -0.00021710759f;
+constexpr float GyroYZero = 0.000264689093f;
+constexpr float GyroZZero = 0.00105367729f;
 
 #endif
 

@@ -5,6 +5,8 @@
 
 extern sp::VT03 vt03;
 
+#define RC_DEADZONE 0.004
+
 //遥控端
 //底盘
 extern float remote_move_y;
