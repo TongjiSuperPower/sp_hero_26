@@ -265,7 +265,7 @@ void fric_control()
 
 void trigger_control()
 {
-  if (Global_Mode == ZERO_FORCE || !pm02.robot_status.power_management_shooter_output) {
+  if (Global_Mode == ZERO_FORCE || pm02.robot_status.power_management_shooter_output) {
     trigger_motor.cmd(0.0f);
     trigger_give_torque = 0.0f;
     return;

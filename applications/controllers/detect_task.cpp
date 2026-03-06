@@ -92,14 +92,14 @@ void motor_dead()
   yaw_motor_alive = yaw_motor.is_alive(stamp_ms);
   trigger_motor_alive = trigger_motor.is_alive(stamp_ms);
   pitch_motor_alive = pitch_motor.is_alive(stamp_ms);
-  if (pm02.robot_status.power_management_shooter_output) {
+  if (!pm02.robot_status.power_management_shooter_output) {
     fric_motor_alive = fric_motor1.is_alive(stamp_ms) && fric_motor2.is_alive(stamp_ms);
   }
   else {
     fric_motor_alive = true;
   }
 
-  if (pm02.robot_status.power_management_chassis_output) {
+  if (!pm02.robot_status.power_management_chassis_output) {
     chassis_alive = wheel_lf.is_alive(stamp_ms) && wheel_lr.is_alive(stamp_ms) &&
                     wheel_rf.is_alive(stamp_ms) && wheel_rr.is_alive(stamp_ms);
   }
@@ -107,14 +107,14 @@ void motor_dead()
     chassis_alive = true;
   }
 
-  if (pm02.robot_status.power_management_gimbal_output) {
+  if (!pm02.robot_status.power_management_gimbal_output) {
     gimbal_alive = yaw_motor.is_alive(stamp_ms) && pitch_motor.is_alive(stamp_ms);
   }
   else {
     gimbal_alive = true;
   }
 
-  if (pm02.robot_status.power_management_shooter_output) {
+  if (!pm02.robot_status.power_management_shooter_output) {
     shoot_alive = fric_motor1.is_alive(stamp_ms) && fric_motor2.is_alive(stamp_ms) &&
                   trigger_motor.is_alive(stamp_ms);
   }

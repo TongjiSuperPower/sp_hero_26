@@ -15,7 +15,7 @@ extern sp::Mahony imu;
 
 // -------------------- 控制参数 --------------------
 //IMU温度
-constexpr float IMU_TEMP = 50.0f;
+constexpr float IMU_TEMP = 40.0f;
 //PID参数
 constexpr float IMU_TEMP_KP = 1600.0f;
 constexpr float IMU_TEMP_KI = 0.2f;

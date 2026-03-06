@@ -27,7 +27,7 @@ void global_mode_control()
 //定义全局模式
 #ifdef VT03
   Last_Global_Mode = Global_Mode;
-  if (vt03.mode == sp::VT03Mode::C || !pm02.robot_status.power_management_gimbal_output) {
+  if (vt03.mode == sp::VT03Mode::C || pm02.robot_status.power_management_gimbal_output) {
     Global_Mode = ZERO_FORCE;
     return;
   }
@@ -40,7 +40,7 @@ void global_mode_control()
 #ifdef DT7
   Last_Global_Mode = Global_Mode;
   if (
-    remote.sw_r == sp::DBusSwitchMode::DOWN || !pm02.robot_status.power_management_gimbal_output) {
+    remote.sw_r == sp::DBusSwitchMode::DOWN || pm02.robot_status.power_management_gimbal_output) {
     Global_Mode = ZERO_FORCE;
     return;
   }
