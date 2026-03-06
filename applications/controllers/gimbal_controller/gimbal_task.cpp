@@ -35,6 +35,11 @@ float servo_position = 135.0f;  // 初始位置为0度
 bool last_key_lob_mode = false;
 bool last_key_autoaim = false;
 
+// GIMBAL_LOB_CODE 模式下的目标角度
+float lob_code_yaw_target = 0.0f;    // 记录进入 LOB_CODE 时的 yaw 目标角度
+float lob_code_pitch_target = 0.0f;  // 记录进入 LOB_CODE 时的 pitch 目标角度
+static bool last_key_r = false;      // 用于检测 r 键的上升沿
+
 // LOB 模式的增量步进控制
 constexpr float LOB_YAW_STEP = 0.005f;    // yaw 每次转动的固定角度（弧度）
 constexpr float LOB_PITCH_STEP = 0.001f;  // pitch 每次转动的固定角度（弧度）
@@ -268,6 +273,29 @@ void gimbal_mode_control()
         shoot_mode_flag = 0;
       }
     }
+
+    // ============================================
+    // 在吊射模式下按 R 键进入 GIMBAL_LOB_CODE 模式
+    // ============================================
+    if (Gimbal_Mode == GIMBAL_LOB) {
+      bool key_r = false;
+#ifdef VT03
+      key_r = vt03.keys.r;
+#endif
+#ifdef DT7
+      key_r = remote.keys.r;
+#endif
+      
+      // 检测 R 键上升沿（未按 → 按下）
+      if (key_r && !last_key_r) {
+        Last_Gimbal_Mode = Gimbal_Mode;
+        Gimbal_Mode = GIMBAL_LOB_CODE;
+        // 记录进入 LOB_CODE 时的当前角度
+        lob_code_yaw_target = yaw_target_angle;
+        lob_code_pitch_target = pitch_target_angle;
+      }
+      last_key_r = key_r;
+    }
   }
 
   // 判断是否进入回中模式
@@ -415,7 +443,40 @@ void gimbal_cmd()
       vis.pitch, IMU_PITCH_ANGLE_MIN + slope_angle, IMU_PITCH_ANGLE_MAX + slope_angle);
 #endif
   }
+if (Gimbal_Mode == GIMBAL_LOB_CODE) {
+    // W键 - Pitch 抬起（pitch 减小）
+    if (key_move_x_up && !last_key_move_x_up) {
+      pitch_target_angle += LOB_PITCH_STEP;
+    }
+    // S键 - Pitch 放下（pitch 增大）
+    if (key_move_x_down && !last_key_move_x_down) {
+      pitch_target_angle -= LOB_PITCH_STEP;
+    }
+    // A键 - Yaw 左转
+    if (key_move_y_up && !last_key_move_y_up) {
+      yaw_target_angle += LOB_YAW_STEP;
+    }
+    // D键 - Yaw 右转
+    if (key_move_y_down && !last_key_move_y_down) {
+      yaw_target_angle -= LOB_YAW_STEP;
+    }
 
+    // 更新上一次按键状态
+    last_key_move_x_up = key_move_x_up;
+    last_key_move_x_down = key_move_x_down;
+    last_key_move_y_up = key_move_y_up;
+    last_key_move_y_down = key_move_y_down;
+
+// 应用角度限制
+#ifdef RMUL
+    pitch_target_angle =
+      sp::limit_min_max(pitch_target_angle, IMU_PITCH_ANGLE_MIN, IMU_PITCH_ANGLE_MAX);
+#endif
+#ifdef RMUC
+    pitch_target_angle = sp::limit_min_max(
+      pitch_target_angle, IMU_PITCH_ANGLE_MIN + slope_angle, IMU_PITCH_ANGLE_MAX + slope_angle);
+#endif
+  }
   if (Gimbal_Mode == GIMBAL_INIT) {
     yaw_target_angle = 0.0f;
     pitch_target_angle = 0.0f;

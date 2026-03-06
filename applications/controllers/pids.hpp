@@ -22,9 +22,9 @@ constexpr float MAX_XIAOMI_TORQUE = 12.0f;  // 小米电机最大扭矩，单位
 
 #ifdef HERO_DOG
 //位置控制PID
-inline sp::PID yaw_pos_pid(T_CONTROL, 20.0f, 0.0f, 0.3f, 7, 3, 1.0f, true, false);
+inline sp::PID yaw_pos_pid(T_CONTROL, 20.0f, 0.0f, 0.0f, 7, 3, 1.0f, true, false);
 inline sp::PID yaw_speed_pid(
-  T_CONTROL, 2.0f, 0.0f, 0.25f, MAX_4310_TORQUE, MAX_4310_TORQUE / 3.0f, 1.0f, false, false);
+  T_CONTROL, 2.0f, 0.0f, 0.0f, MAX_4310_TORQUE, MAX_4310_TORQUE / 3.0f, 1.0f, false, false);
 
 inline sp::PID pitch_pos_pid(T_CONTROL, 105.0f, 130.0f, 4.1f, 6, 5.4, 1.0f, true, false);//100
 inline sp::PID pitch_speed_pid(
