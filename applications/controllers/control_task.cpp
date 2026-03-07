@@ -101,7 +101,7 @@ extern "C" void Control_Task()
     //拨弹轮控制
     trigger_control();
     // can1 send一次；can2 send一次
-    // chassis_send();
+    chassis_send();
     // 摩擦轮和拨弹轮
     fric_send();
     trigger_send();
@@ -341,18 +341,18 @@ void gimbal_gyro_control()
 {
   //解算GYRO模式下两轴电流
   //yaw
-  yaw_pos_pid.calc(0.0f, yaw_motor.angle);
-  yaw_speed_pid.calc(yaw_pos_pid.out, yaw_motor.speed);
+  yaw_pos_pid.calc(yaw_target_angle, imu.yaw);
+  yaw_speed_pid.calc(yaw_pos_pid.out, imu_vyaw_filter);
   yaw_cmd_torque = sp::limit_max(yaw_speed_pid.out, MAX_4310_TORQUE);
   yaw_motor.cmd(yaw_cmd_torque);
   //pitch
-  pitch_pos_pid.calc(1.2f, pitch_motor.angle);
+  pitch_pos_pid.calc(pitch_target_angle, imu.pitch);
   // if (pitch_pos_pid.out * pitch_pos_pid.data.iout < 0) {
   //   pitch_pos_pid.data.iout /= 3;
   // }
-  pitch_speed_pid.calc(pitch_pos_pid.out, pitch_motor.speed);
+  pitch_speed_pid.calc(pitch_pos_pid.out, imu_vpitch_filter);
   gravity_compensation = cos(OFFSET_ANGLE + imu.pitch) * TOR_PARAM;
-  pitch_torque = pitch_speed_pid.out ;
+  pitch_torque = -pitch_speed_pid.out+ gravity_compensation;
   pitch_motor.cmd(pitch_torque);
   // pitch_motor.cmd(gravity_compensation);
 }
