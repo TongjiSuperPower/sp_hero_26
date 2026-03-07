@@ -30,7 +30,7 @@ uint16_t turnover_cold_time = TURNOVER_COLDTIME;
 uint8_t shoot_mode_flag = 0;
 
 //舵机位置控制
-float servo_position = 135.0f;  // 初始位置为0度
+float servo_position = 135.0f;  // 初始位置为135度
 
 bool last_key_lob_mode = false;
 bool last_key_autoaim = false;
@@ -210,11 +210,20 @@ void gimbal_mode_control()
   static bool lob_enable_flag = 0;
   // last_key_lob: 用于检测按键按下瞬间
   static bool last_key_lob = 0;
+  // last_global_mode: 用于检测 Global_Mode 是否改变
+  static global_mode last_global_mode = ZERO_FORCE;
 
   // 正在回中过程中无法调整模式
   if (gimbal_init_flag == 1) {
     return;
   }
+
+  // 当从 KEYBOARD 模式切换到其他模式时，重置 LOB 开关标志
+  if (last_global_mode == KEYBOARD && Global_Mode != KEYBOARD) {
+    lob_enable_flag = 0;
+    last_key_lob = 0;
+  }
+  last_global_mode = Global_Mode;
 
   // DOWN (掉电/无力模式)
   if (Global_Mode == ZERO_FORCE) {
@@ -285,14 +294,14 @@ void gimbal_mode_control()
 #ifdef DT7
       key_r = remote.keys.r;
 #endif
-      
+
       // 检测 R 键上升沿（未按 → 按下）
       if (key_r && !last_key_r) {
         Last_Gimbal_Mode = Gimbal_Mode;
         Gimbal_Mode = GIMBAL_LOB_CODE;
         // 记录进入 LOB_CODE 时的当前角度
-        lob_code_yaw_target = yaw_target_angle;
-        lob_code_pitch_target = pitch_target_angle;
+        lob_code_yaw_target = yaw_motor.angle;
+        lob_code_pitch_target = pitch_motor.angle;
       }
       last_key_r = key_r;
     }
@@ -443,7 +452,7 @@ void gimbal_cmd()
       vis.pitch, IMU_PITCH_ANGLE_MIN + slope_angle, IMU_PITCH_ANGLE_MAX + slope_angle);
 #endif
   }
-if (Gimbal_Mode == GIMBAL_LOB_CODE) {
+  if (Gimbal_Mode == GIMBAL_LOB_CODE) {
     // W键 - Pitch 抬起（pitch 减小）
     if (key_move_x_up && !last_key_move_x_up) {
       pitch_target_angle += LOB_PITCH_STEP;
@@ -503,7 +512,7 @@ void servo_cmd()
 
   // 按住C键时，检测Q键按下边缘（从未按下到按下的瞬间）
   if (remote.keys.c && remote.keys.q && !last_key_q) {
-    servo_position = sp::limit_min_max(servo_position + 2.0f, 0.0f, 270.0f); // 增加一个小角度
+    servo_position = sp::limit_min_max(servo_position + 2.0f, 0.0f, 270.0f);  // 增加一个小角度
   }
   // 按住C键时，检测E键按下边缘（从未按下到按下的瞬间）
   else if (remote.keys.c && remote.keys.e && !last_key_e) {
@@ -513,5 +522,4 @@ void servo_cmd()
   // 更新上一次的按键状态
   last_key_q = remote.keys.q;
   last_key_e = remote.keys.e;
-
 }
