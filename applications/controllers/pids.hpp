@@ -43,7 +43,7 @@ inline sp::PID yaw_pos_lob_pid(T_CONTROL, 20.0f, 0.0f, 0.0f, 7, 3, 1.0f, true, f
 inline sp::PID yaw_speed_lob_pid(
   T_CONTROL, 2.0f, 0.0f, 0.25f, MAX_4310_TORQUE, MAX_4310_TORQUE / 3.0f, 1.0f, false, false);
 
-inline sp::PID pitch_pos_lob_pid(T_CONTROL, 105.0f, 180.0f, 4.1f, 6, 5.4, 1.0f, true, false);
+inline sp::PID pitch_pos_lob_pid(T_CONTROL, 105.0f, 180.0f, 2.1f, 6, 5.4, 1.0f, true, false);//4.1
 inline sp::PID pitch_speed_lob_pid(
   T_CONTROL, 0.65f, 0.0f, 0.0f, MAX_XIAOMI_TORQUE, 0.2, 1.0f, false, false);//0.6
 #ifdef MPC
