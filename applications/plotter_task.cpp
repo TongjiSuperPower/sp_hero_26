@@ -25,10 +25,12 @@ extern "C" void Plotter_Task()
     // shoot_count, cal_heat, -fric_motor1.speed,pm02.power_heat.shooter_42mm_barrel_heat
       // last_key_autoaim,key_autoaim,last_key_lob_mode,key_lob_mode
     //  pitch_speed_pid.data.pout, pitch_speed_pid.data.iout, pitch_speed_pid.data.dout,pitch_speed_pid.out
-    imu.yaw,imu.pitch,trigger_motor.angle,trigger_target_angle,trigger_motor.torque,yaw_target_angle,pitch_target_angle
+    // imu.yaw,imu.pitch,trigger_motor.angle,trigger_target_angle,trigger_motor.torque,yaw_target_angle,pitch_target_angle
       // key_shoot,fric_motor1.speed
+      // yaw_motor.angle,lob_code_yaw_target,remote.keys.r
+      // yaw_target_angle,imu.yaw
+      yaw_motor.angle,pitch_motor.angle,remote.keys.r
       
-
       
       );
 

@@ -69,5 +69,7 @@ extern bool last_key_lob_mode;
 extern bool last_key_autoaim;
 extern uint16_t gimbal_init_time;
 extern uint16_t gimbal_init_over_time;
+extern float lob_code_yaw_target;
+extern float lob_code_pitch_target;
 
 #endif

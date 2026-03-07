@@ -54,6 +54,7 @@ void trigger_control();
 void shoot_init_control();
 void shoot_single_control();
 void gimbal_lobauto_control();
+void gimbal_lobcode_control();
 
 extern "C" void Control_Task()
 {
@@ -330,6 +331,10 @@ void gimbal_control()
   if (Gimbal_Mode == GIMBAL_LOB_AUTO) {
     gimbal_lobauto_control();
   }
+  if (Gimbal_Mode == GIMBAL_LOB_CODE) {
+    gimbal_lobcode_control();
+  }
+  
 }
 
 void gimbal_gyro_control()
@@ -347,7 +352,7 @@ void gimbal_gyro_control()
   // }
   pitch_speed_pid.calc(pitch_pos_pid.out, imu_vpitch_filter);
   gravity_compensation = cos(OFFSET_ANGLE + imu.pitch) * TOR_PARAM;
-  pitch_torque = -pitch_speed_pid.out + gravity_compensation;
+  pitch_torque = -pitch_speed_pid.out+ gravity_compensation;
   pitch_motor.cmd(pitch_torque);
   // pitch_motor.cmd(gravity_compensation);
 }
@@ -468,5 +473,21 @@ void gimbal_lobauto_control()
   pitch_speed_lob_pid.calc(pitch_pos_lob_pid.out, imu_vpitch_filter);
   gravity_compensation = cos(OFFSET_ANGLE + imu.pitch) * TOR_PARAM;
   pitch_torque = -pitch_speed_lob_pid.out + gravity_compensation;
+  pitch_motor.cmd(pitch_torque);
+}
+
+void gimbal_lobcode_control()
+{
+  // 在 GIMBAL_LOB_CODE 模式下，维持进入时的 yaw 和 pitch 目标角度
+  yaw_pos_code_pid.calc(lob_code_yaw_target, yaw_motor.angle);
+  yaw_speed_code_pid.calc(yaw_pos_code_pid.out, yaw_motor.speed);
+  yaw_cmd_torque = sp::limit_max(yaw_speed_code_pid.out, MAX_4310_TORQUE);
+  yaw_motor.cmd(yaw_cmd_torque);
+  
+  // pitch
+  pitch_pos_code_pid.calc(lob_code_pitch_target, pitch_motor.angle);
+  pitch_speed_code_pid.calc(pitch_pos_code_pid.out, pitch_motor.speed);
+  // gravity_compensation = cos(OFFSET_ANGLE + imu.pitch) * TOR_PARAM;
+  pitch_torque = pitch_speed_code_pid.out ;
   pitch_motor.cmd(pitch_torque);
 }

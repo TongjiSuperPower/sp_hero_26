@@ -21,7 +21,7 @@ float trigger_target_angle = 0.0f;
 //目标拨弹轮转速
 float trigger_target_speed = 0.0f;
 //摩擦轮转速正常（从down切换到on）
-bool fric_speed_normal_flag = false;
+bool fric_speed_normal_flag = false;//0.8398f
 //上一次射速
 float last_initial_speed = 0.0f;
 //射速
@@ -375,7 +375,7 @@ void shoot_init_cmd(void)
     shoot_init_state_flag = false;
     trigger_block_flag = false;
     //保证进入单发之后的连续性（保证single_shoot_over_flag判断上一发（单发连发均可判断）是否射击完成）
-    // trigger_target_angle = trigger_motor.angle;
+    trigger_target_angle = 0.7080f;
   }
 }
 
