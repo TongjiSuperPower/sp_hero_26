@@ -253,40 +253,43 @@ void gimbal_mode_control()
     // ============================================
     // 步骤 2：根据 [开关状态] + [自瞄按键] 决定最终模式
     // ============================================
-    Last_Gimbal_Mode = Gimbal_Mode;  // 记录上一时刻模式
+    // 保护 GIMBAL_LOB_CODE 模式：不要覆盖已有的 GIMBAL_LOB_CODE 状态
+    if (Gimbal_Mode != GIMBAL_LOB_CODE) {
+      Last_Gimbal_Mode = Gimbal_Mode;  // 记录上一时刻模式
 
-    if (key_autoaim) {
-      // --- 按住鼠标右键 (自瞄激活) ---
+      if (key_autoaim) {
+        // --- 按住鼠标右键 (自瞄激活) ---
 
-      if (lob_enable_flag) {
-        // 如果 LOB 开关是开的 -> 进入【吊射自瞄】
-        Gimbal_Mode = GIMBAL_LOB_AUTO;
+        if (lob_enable_flag) {
+          // 如果 LOB 开关是开的 -> 进入【吊射自瞄】
+          Gimbal_Mode = GIMBAL_LOB_AUTO;
+        }
+        else {
+          // 如果 LOB 开关是关的 -> 进入【普通自瞄】
+          Gimbal_Mode = GIMBAL_AUTO;
+        }
       }
       else {
-        // 如果 LOB 开关是关的 -> 进入【普通自瞄】
-        Gimbal_Mode = GIMBAL_AUTO;
-      }
-    }
-    else {
-      // --- 松开鼠标右键 (手动控制) ---
+        // --- 松开鼠标右键 (手动控制) ---
 
-      if (lob_enable_flag) {
-        // 如果 LOB 开关是开的 -> 回到【吊射模式】
-        Gimbal_Mode = GIMBAL_LOB;
-        // 注意：这里没有置零 shoot_mode_flag，默认吊射模式允许发射
-      }
-      else {
-        // 如果 LOB 开关是关的 -> 回到【普通陀螺仪】
-        Gimbal_Mode = GIMBAL_GYRO;
-        // 普通巡逻模式下，通常为了安全会重置发射允许标志
-        shoot_mode_flag = 0;
+        if (lob_enable_flag) {
+          // 如果 LOB 开关是开的 -> 回到【吊射模式】
+          Gimbal_Mode = GIMBAL_LOB;
+          // 注意：这里没有置零 shoot_mode_flag，默认吊射模式允许发射
+        }
+        else {
+          // 如果 LOB 开关是关的 -> 回到【普通陀螺仪】
+          Gimbal_Mode = GIMBAL_GYRO;
+          // 普通巡逻模式下，通常为了安全会重置发射允许标志
+          shoot_mode_flag = 0;
+        }
       }
     }
 
     // ============================================
-    // 在吊射模式下按 R 键进入 GIMBAL_LOB_CODE 模式
+    // 在吊射模式或 LOB_CODE 模式下按 R 键切换状态
     // ============================================
-    if (Gimbal_Mode == GIMBAL_LOB) {
+    if (Gimbal_Mode == GIMBAL_LOB || Gimbal_Mode == GIMBAL_LOB_CODE) {
       bool key_r = false;
 #ifdef VT03
       key_r = vt03.keys.r;
@@ -297,11 +300,21 @@ void gimbal_mode_control()
 
       // 检测 R 键上升沿（未按 → 按下）
       if (key_r && !last_key_r) {
-        Last_Gimbal_Mode = Gimbal_Mode;
-        Gimbal_Mode = GIMBAL_LOB_CODE;
-        // 记录进入 LOB_CODE 时的当前角度
-        lob_code_yaw_target = yaw_motor.angle;
-        lob_code_pitch_target = pitch_motor.angle;
+        if (Gimbal_Mode == GIMBAL_LOB) {
+          // 从 GIMBAL_LOB 进入 GIMBAL_LOB_CODE
+          
+          // 记录进入 LOB_CODE 时的当前电机实际角度
+         
+          Last_Gimbal_Mode = Gimbal_Mode;
+          Gimbal_Mode = GIMBAL_LOB_CODE;
+           lob_code_yaw_target = yaw_motor.angle;
+          lob_code_pitch_target = pitch_motor.angle;
+        }
+        else if (Gimbal_Mode == GIMBAL_LOB_CODE) {
+          // 从 GIMBAL_LOB_CODE 退出回 GIMBAL_LOB
+          Last_Gimbal_Mode = Gimbal_Mode;
+          Gimbal_Mode = GIMBAL_LOB;
+        }
       }
       last_key_r = key_r;
     }
@@ -455,19 +468,19 @@ void gimbal_cmd()
   if (Gimbal_Mode == GIMBAL_LOB_CODE) {
     // W键 - Pitch 抬起（pitch 减小）
     if (key_move_x_up && !last_key_move_x_up) {
-      pitch_target_angle += LOB_PITCH_STEP;
+      lob_code_pitch_target += LOB_PITCH_STEP;
     }
     // S键 - Pitch 放下（pitch 增大）
     if (key_move_x_down && !last_key_move_x_down) {
-      pitch_target_angle -= LOB_PITCH_STEP;
+      lob_code_pitch_target -= LOB_PITCH_STEP;
     }
     // A键 - Yaw 左转
     if (key_move_y_up && !last_key_move_y_up) {
-      yaw_target_angle += LOB_YAW_STEP;
+      lob_code_yaw_target += LOB_YAW_STEP;
     }
     // D键 - Yaw 右转
     if (key_move_y_down && !last_key_move_y_down) {
-      yaw_target_angle -= LOB_YAW_STEP;
+      lob_code_yaw_target -= LOB_YAW_STEP;
     }
 
     // 更新上一次按键状态

@@ -195,7 +195,8 @@ void chassis_mode_control()
       if (key_spin) {
         Chassis_Mode = CHASSIS_SPIN;
       }
-      if(Gimbal_Mode == GIMBAL_LOB || Gimbal_Mode == GIMBAL_LOB_AUTO)
+      if(Gimbal_Mode == GIMBAL_LOB || Gimbal_Mode == GIMBAL_LOB_AUTO || Gimbal_Mode == GIMBAL_LOB_CODE)
+        // 在吊射相关模式下，底盘进入吊射模式
       {
         Chassis_Mode = CHASSIS_LOB;
       }
