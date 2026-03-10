@@ -84,7 +84,7 @@ void super_cap_send()
   if (count >= 10) {
     super_cap.write(
       can2.tx_data, pm02.robot_status.chassis_power_limit, pm02.power_heat.buffer_energy,
-      pm02.robot_status.power_management_chassis_output);
+      !pm02.robot_status.power_management_chassis_output);
     can2.send(super_cap.tx_id);
     count = 0;
   }

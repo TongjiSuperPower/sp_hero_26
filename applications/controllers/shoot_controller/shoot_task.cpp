@@ -101,7 +101,7 @@ void fric_mode_control(void)
 {
 #ifdef VT03
   static bool last_remote_fn_l = vt03.fn_l;
-  if (Global_Mode == ZERO_FORCE ||!pm02.robot_status.power_management_shooter_output == 0) {
+  if (Global_Mode == ZERO_FORCE ||pm02.robot_status.power_management_shooter_output == 0) {
     Fric_Mode = FRIC_DOWN;
     Shoot_Mode = FIRE_DOWN;
     fric_speed_normal_flag = false;
@@ -124,7 +124,7 @@ void fric_mode_control(void)
 
 #ifdef DT7
   static bool last_fric_flag = remote.sw_l == sp::DBusSwitchMode::UP;
-  if (Global_Mode == ZERO_FORCE || pm02.robot_status.power_management_shooter_output == 1) {
+  if (Global_Mode == ZERO_FORCE || !pm02.robot_status.power_management_shooter_output == 1) {
     Fric_Mode = FRIC_DOWN;
     Shoot_Mode = FIRE_DOWN;
     fric_speed_normal_flag = false;
@@ -486,7 +486,7 @@ void shoot_heat_cal()
 
   last_fric_speed = fric_speed;
   fric_speed = (-fric_motor1.speed + fric_motor2.speed) / 2.0f;
-  if (Fric_Mode == FRIC_ON && !pm02.robot_status.power_management_shooter_output) {
+  if (Fric_Mode == FRIC_ON && pm02.robot_status.power_management_shooter_output) {
     if (last_fric_speed - fric_speed > 20.0f && count_flag == false) {
       shoot_count++;
       cal_heat += b;

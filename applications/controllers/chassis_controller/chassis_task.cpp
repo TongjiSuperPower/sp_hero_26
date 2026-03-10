@@ -153,11 +153,11 @@ extern "C" void Chassis_Task()
 
 void chassis_mode_control()
 {
-  static bool chassis_output_zero = !pm02.robot_status.power_management_chassis_output;
-  if (!chassis_output_zero && !pm02.robot_status.power_management_chassis_output) {
+  static bool chassis_output_zero = pm02.robot_status.power_management_chassis_output;
+  if (!chassis_output_zero && pm02.robot_status.power_management_chassis_output) {
     chassis_init_flag = true;
   }
-  chassis_output_zero = !pm02.robot_status.power_management_chassis_output;
+  chassis_output_zero = pm02.robot_status.power_management_chassis_output;
   //底盘初始化优先级最高
   if (chassis_init_flag) {
     Chassis_Mode = CHASSIS_INIT;
