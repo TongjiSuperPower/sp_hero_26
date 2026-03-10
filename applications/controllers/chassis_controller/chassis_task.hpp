@@ -62,7 +62,7 @@ constexpr float ZeroXY = 1.0e-6f;
 
 #ifdef HERO_DOG
 //底盘跟随pid
-inline sp::PID chassis_follow_wz_pid(T_CHASSIS, 8.5f, 0.0f, 0.7f, 5.0f, 3.0f, 0.5f);
+inline sp::PID chassis_follow_wz_pid(T_CHASSIS, 18.5f, 5.0f, 1.2f, 5.0f, 3.0f, 0.5f);//8.5 0.7
 
 #endif
 
