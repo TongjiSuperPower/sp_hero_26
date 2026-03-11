@@ -444,7 +444,8 @@ void shoot_single_permission(void)
   if (Global_Mode == KEYBOARD) {
     if (
       Fric_Mode == FRIC_ON &&
-      (key_shoot || (vis.fire && vis.control && Gimbal_Mode == GIMBAL_AUTO)) &&
+      // (key_shoot || (vis.fire && vis.control && Gimbal_Mode == GIMBAL_AUTO)) &&
+      (key_shoot) &&
       single_shoot_cold_time == 0 &&
       pm02.power_heat.shooter_42mm_barrel_heat <
         pm02.robot_status.shooter_barrel_heat_limit - HEAT_PER_SHOT) {
