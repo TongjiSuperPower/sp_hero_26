@@ -42,7 +42,7 @@ static bool last_key_r = false;      // 用于检测 r 键的上升沿
 
 // LOB 模式的增量步进控制
 constexpr float LOB_YAW_STEP = 0.002f;    // yaw 每次转动的固定角度（弧度）
-constexpr float LOB_PITCH_STEP = 0.001f;  // pitch 每次转动的固定角度（弧度）
+constexpr float LOB_PITCH_STEP = 0.002f;  // pitch 每次转动的固定角度（弧度）//0.001
 
 // 遥控器摇杆死区阈值（绝对值低于此值时忽略输入）
 constexpr float REMOTE_DEADZONE = 0.05f;  // 根据需要调整
