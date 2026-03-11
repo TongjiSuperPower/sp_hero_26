@@ -21,7 +21,7 @@ float trigger_target_angle = 0.0f;
 //目标拨弹轮转速
 float trigger_target_speed = 0.0f;
 //摩擦轮转速正常（从down切换到on）
-bool fric_speed_normal_flag = false;//0.8398f
+bool fric_speed_normal_flag = false;  //0.8398f
 //上一次射速
 float last_initial_speed = 0.0f;
 //射速
@@ -65,7 +65,7 @@ bool shoot_init_state_flag = false;
 
 // -------------------- SHOOT_READY_SINGLE相关 --------------------
 //每次射击冷却时间
-uint16_t single_shoot_cold_time = 0;
+uint16_t single_shoot_cold_time;
 //射击时间
 uint16_t single_shoot_time;
 //射击完成时间
@@ -101,7 +101,7 @@ void fric_mode_control(void)
 {
 #ifdef VT03
   static bool last_remote_fn_l = vt03.fn_l;
-  if (Global_Mode == ZERO_FORCE ||pm02.robot_status.power_management_shooter_output == 0) {
+  if (Global_Mode == ZERO_FORCE || pm02.robot_status.power_management_shooter_output == 0) {
     Fric_Mode = FRIC_DOWN;
     Shoot_Mode = FIRE_DOWN;
     fric_speed_normal_flag = false;
@@ -124,7 +124,7 @@ void fric_mode_control(void)
 
 #ifdef DT7
   static bool last_fric_flag = remote.sw_l == sp::DBusSwitchMode::UP;
-  if (Global_Mode == ZERO_FORCE || !pm02.robot_status.power_management_shooter_output == 1) {
+  if (Global_Mode == ZERO_FORCE || pm02.robot_status.power_management_shooter_output == 0) {
     Fric_Mode = FRIC_DOWN;
     Shoot_Mode = FIRE_DOWN;
     fric_speed_normal_flag = false;
@@ -272,15 +272,18 @@ void trigger_mode_control(void)
 #endif
 }
 
-
 //摩擦轮目标速度设置与调整
 void fric_cmd(void)
 {
-  float first_speed = (fabs(fric_motor1.speed) + fabs(fric_motor2.speed)+fabs(fric_motor3.speed)) / 3.0f;
-  float second_speed = (fabs(fric_motor4.speed) + fabs(fric_motor5.speed)+fabs(fric_motor6.speed)) / 3.0f;
+  float first_speed =
+    (fabs(fric_motor1.speed) + fabs(fric_motor2.speed) + fabs(fric_motor3.speed)) / 3.0f;
+  float second_speed =
+    (fabs(fric_motor4.speed) + fabs(fric_motor5.speed) + fabs(fric_motor6.speed)) / 3.0f;
   //摩擦轮转速正常（从down切换到on到转速稳定了;变目标速度稳定之后再打弹）
   if (!fric_speed_normal_flag && fric_target_speed_first != 0 && fric_target_speed_second != 0) {
-    if (fabs(first_speed - fric_target_speed_first) < 2.0f && fabs(second_speed - fric_target_speed_second) < 2.0f) {
+    if (
+      fabs(first_speed - fric_target_speed_first) < 2.0f &&
+      fabs(second_speed - fric_target_speed_second) < 2.0f) {
       fric_speed_normal_flag = true;
     }
   }
@@ -425,7 +428,8 @@ void shoot_single_permission(void)
   if (Global_Mode == REMOTE) {
     if (
       Fric_Mode == FRIC_ON && remote_shoot && single_shoot_cold_time == 0 &&
-      pm02.power_heat.shooter_42mm_barrel_heat < pm02.robot_status.shooter_barrel_heat_limit - HEAT_PER_SHOT) {
+      pm02.power_heat.shooter_42mm_barrel_heat <
+        pm02.robot_status.shooter_barrel_heat_limit - HEAT_PER_SHOT) {
       if (first_shoot == true) {
         trigger_target_angle = trigger_near_work_position();
         first_shoot = false;
@@ -441,7 +445,9 @@ void shoot_single_permission(void)
     if (
       Fric_Mode == FRIC_ON &&
       (key_shoot || (vis.fire && vis.control && Gimbal_Mode == GIMBAL_AUTO)) &&
-      single_shoot_cold_time == 0 && pm02.power_heat.shooter_42mm_barrel_heat < pm02.robot_status.shooter_barrel_heat_limit - HEAT_PER_SHOT) {
+      single_shoot_cold_time == 0 &&
+      pm02.power_heat.shooter_42mm_barrel_heat <
+        pm02.robot_status.shooter_barrel_heat_limit - HEAT_PER_SHOT) {
       if (first_shoot == true) {
         trigger_target_angle = trigger_near_work_position();
         first_shoot = false;

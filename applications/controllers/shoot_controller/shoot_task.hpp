@@ -26,7 +26,7 @@ constexpr float TRIGGER_BACK_ANGLE = 0.6f;  //rad
 //拨弹轮双发反转角度
 constexpr float TRIGGER_SINGLE_BACK_ANGLE = 0.4f;  //rad
 //拨弹轮复位角度
-constexpr float TRIGGER_INIT_ANGLE = 1.92090845;  //rad
+constexpr float TRIGGER_INIT_ANGLE = 2.75109243f;  //rad
 
 // -------------------- SHOOT_READY_SINGLE相关 --------------------
 //每次射击冷却时间
@@ -104,6 +104,8 @@ extern float cal_heat;
 extern uint32_t shoot_count;
 extern float fric_speed;
 extern float last_fric_speed;
+
+extern uint16_t single_shoot_cold_time;
 
 //状态机初始化
 void shoot_mode_init(void);

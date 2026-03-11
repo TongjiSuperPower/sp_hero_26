@@ -22,17 +22,17 @@ constexpr float MAX_XIAOMI_TORQUE = 12.0f;  // 小米电机最大扭矩，单位
 
 #ifdef HERO_DOG
 //位置控制PID
-inline sp::PID yaw_pos_pid(T_CONTROL, 35.0f, 0.0f, 10.0f, 7, 3, 1.0f, true, false);
+inline sp::PID yaw_pos_pid(T_CONTROL, 45.0f, 30.0f, 8.0f, 7, 3, 1.0f, true, false);
 inline sp::PID yaw_speed_pid(
   T_CONTROL, 1.5f, 0.0f, 0.0f, MAX_4310_TORQUE, MAX_4310_TORQUE / 3.0f, 1.0f, false, false);
 
 inline sp::PID pitch_pos_pid(
   T_CONTROL, 155.0f, 180.0f, 4.1f, 6, 5.4, 1.0f, true, false);  //100//130
 inline sp::PID pitch_speed_pid(
-  T_CONTROL, 0.76f, 0.0f, 0.0f, MAX_XIAOMI_TORQUE, 0.2, 1.0f, false, false);  //0.76//2.00
+  T_CONTROL, 0.8f, 0.0f, 0.0f, MAX_XIAOMI_TORQUE, 0.2, 1.0f, false, false);  //0.76//2.00
 
 //初始化PID
-inline sp::PID yaw_encode_pos_pid(T_CONTROL, 10.0f, 0.0f, 0.45f, 3, 1.5, 1.0f, true, false);
+inline sp::PID yaw_encode_pos_pid(T_CONTROL, 10.0f, 0.0f, 0.45f, 3.0f, 1.5f, 1.0f, true, false);
 inline sp::PID yaw_encode_speed_pid(
   T_CONTROL, 0.2f, 0.0f, 0.12f, MAX_4310_TORQUE, MAX_4310_TORQUE / 3.0f, 1.0, false, false);
 
@@ -55,11 +55,11 @@ inline sp::PID yaw_speed_code_pid(
   T_CONTROL, 2.0f, 0.0f, 0.0f, MAX_4310_TORQUE, MAX_4310_TORQUE / 3.0f, 1.0f, false, false);
 #ifdef MPC
 inline sp::PID yaw_vel_pid(1e-3f, 1, 0, 0, 100, 0, 1.0f, true, false);
-inline sp::PID pitch_vel_pid(1e-3f, 1, 0, 0, 100, 0, 1.0f, true, false);
+inline sp::PID yaw_acc_pid(1e-3f, 1800, 2800, 200, 100, 80, 1.0f, true, false);
 // inline sp::PID yaw_acc_pid(1e-3f, 3000, 0, 100, 100, 30, 1.0f, true, false);
 // inline sp::PID yaw_acc_pid(1e-2f, 0, 0, 0, 100, 10, 1.0f, true, false);
 // inline sp::PID yaw_acc_pid(1e-3f, 3300, 30000, 95, 100, 80, 1.0f, true, false);
-inline sp::PID yaw_acc_pid(1e-3f, 400, 700, 40, 100, 80, 1.0f, true, false);
+inline sp::PID pitch_vel_pid(1e-3f, 1, 0, 0, 100, 0, 1.0f, true, false);
 inline sp::PID pitch_acc_pid(1e-3f, 4700, 0, 180, 100, 10, 1.0f, true, false);
 //小陀螺补偿
 inline sp::PID yaw_spin_compensation_pid(
@@ -73,10 +73,10 @@ constexpr float TRIGGER_MAX_TORQUE = 1.8f;       // N.m
 
 #ifdef HERO_DOG
 //单发外环PID
-inline sp::PID trigger_pos_pid1(T_CONTROL, 16.05f, 6.0f, 0.0f, 10, 0.5, 0.5f, true, true);
+inline sp::PID trigger_pos_pid1(T_CONTROL, 22.0f, 15.0f, 0.0f, 10, 0.5, 0.5f, true, true);
 //单发内环PID
 inline sp::PID trigger_speed_pid2(
-  T_CONTROL, 0.80f, 0.0f, 0.002f, MAX_4310_TORQUE, MAX_4310_TORQUE / 3.0f, 1, false, true);
+  T_CONTROL, 1.75f, 0.0f, 0.002f, MAX_4310_TORQUE, MAX_4310_TORQUE / 3.0f, 1, false, true);
 
 //反转外环PID
 inline sp::PID triggerback_pos_pid1(T_CONTROL, 40.05f, 3.5f, 0.1f, 10, 10, 1.0f, true, true);

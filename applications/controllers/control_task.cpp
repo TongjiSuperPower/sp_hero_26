@@ -101,7 +101,7 @@ extern "C" void Control_Task()
     //拨弹轮控制
     trigger_control();
     // can1 send一次；can2 send一次
-    chassis_send();
+    // chassis_send();
     // 摩擦轮和拨弹轮
     fric_send();
     trigger_send();
