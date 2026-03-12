@@ -28,9 +28,12 @@
 // m = 0.0597, b = 0.7359, c = 0.3866
 // m = 0.0079, b = 1.8003, c = 0.1164
 // m = 0.0849, b = 0.5291, c = 0.4729
-constexpr float YAW_INERTIA = 0.0849f;
-constexpr float YAW_DAMPING_COEFF = 0.5291f;
-constexpr float YAW_COULOMB_FORCE = 0.4729f;
+// constexpr float YAW_INERTIA = 0.0849f;
+// constexpr float YAW_DAMPING_COEFF = 0.5291f;
+// constexpr float YAW_COULOMB_FORCE = 0.4729f;
+constexpr float YAW_INERTIA = 0.1336f;
+constexpr float YAW_DAMPING_COEFF = 0.2605f;
+constexpr float YAW_COULOMB_FORCE = 0.7021f;
 // constexpr float YAW_INERTIA = 0.0597;
 // constexpr float YAW_DAMPING_COEFF = 0.7359f;
 // constexpr float YAW_COULOMB_FORCE = 0.3866f;

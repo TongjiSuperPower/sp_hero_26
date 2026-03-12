@@ -6,6 +6,7 @@
 #include "cmsis_os.h"
 #include "controllers/mode.hpp"
 #include "data_interfaces/uart/uart_task.hpp"
+#include "controllers/gimbal_controller/gimbal_task.hpp"
 #include "power_control.hpp"
 #include "tools/math_tools/math_tools.hpp"
 #include "tools/mecanum/mecanum.hpp"
@@ -117,8 +118,7 @@ extern "C" void Chassis_Task()
       chassis_speed.wz = (spin_revert_flag ? -SPIN_W : SPIN_W);
       keyboard_speedcontrol_spin();
     }
-    if(Chassis_Mode == CHASSIS_LOB)
-    {
+    if (Chassis_Mode == CHASSIS_LOB) {
       chassis_speed.vx = 0.0f;
       chassis_speed.vy = 0.0f;
       chassis_speed.wz = 0.0f;
@@ -134,7 +134,10 @@ extern "C" void Chassis_Task()
     // chassis_target_speed.lr = chassis.speed_lr;
     // chassis_target_speed.rf = chassis.speed_rf;
     // chassis_target_speed.rr = chassis.speed_rr;
-
+    if (is_chassis_inverted) {
+      chassis_speed.vx = -chassis_speed.vx;
+      chassis_speed.vy = -chassis_speed.vy;
+    }
     chassis_coordinate_converter(&chassis_speed, yaw_relative_angle);
     chassis.calc(chassis_speed.vx, chassis_speed.vy, chassis_speed.wz);
     wheel_speed.lf = wheel_lf.speed;
@@ -195,8 +198,10 @@ void chassis_mode_control()
       if (key_spin) {
         Chassis_Mode = CHASSIS_SPIN;
       }
-      if(Gimbal_Mode == GIMBAL_LOB || Gimbal_Mode == GIMBAL_LOB_AUTO || Gimbal_Mode == GIMBAL_LOB_CODE)
-        // 在吊射相关模式下，底盘进入吊射模式
+      if (
+        Gimbal_Mode == GIMBAL_LOB || Gimbal_Mode == GIMBAL_LOB_AUTO ||
+        Gimbal_Mode == GIMBAL_LOB_CODE)
+      // 在吊射相关模式下，底盘进入吊射模式
       {
         Chassis_Mode = CHASSIS_LOB;
       }
@@ -230,7 +235,6 @@ void chassis_mode_control()
       }
     }
 #endif
-
   }
 }
 
@@ -246,7 +250,7 @@ void remote_speedcontrol_follow(void)
   //平滑控制底盘跟随，解决启停扭动问题
   yaw_relative_angle_filter.update(yaw_relative_angle);
   yaw_relative_angle = yaw_relative_angle_filter.out;
-  chassis_follow_wz_pid.calc(0.0f, yaw_relative_angle); //底盘跟随：设为底盘与yaw轴相对角度为0
+  chassis_follow_wz_pid.calc(0.0f, yaw_relative_angle);  //底盘跟随：设为底盘与yaw轴相对角度为0
   // chassis_follow_wz_pid.calc(0.0f, 0); //关闭底盘跟随
   chassis_speed.wz = -chassis_follow_wz_pid.out;
 }
@@ -260,7 +264,7 @@ void keyboard_speedcontrol_follow(bool key)
   if (key == 0) {
     //按下按键后速度为3.2m/s，左右键同时按理论上底盘速度应该是零
     vx =
-      (key_move_x_up ? KEYBOARD_CONTROL_V : 0.0f) + (key_move_x_down ? -KEYBOARD_CONTROL_V : 0.0f); 
+      (key_move_x_up ? KEYBOARD_CONTROL_V : 0.0f) + (key_move_x_down ? -KEYBOARD_CONTROL_V : 0.0f);
     vy =
       (key_move_y_up ? KEYBOARD_CONTROL_V : 0.0f) + (key_move_y_down ? -KEYBOARD_CONTROL_V : 0.0f);
   }
@@ -288,6 +292,7 @@ void keyboard_speedcontrol_follow(bool key)
   //平滑控制底盘跟随，解决启停扭动问题
   yaw_relative_angle_filter.update(yaw_relative_angle);
   yaw_relative_angle = yaw_relative_angle_filter.out;
+  
   chassis_follow_wz_pid.calc(0.0f, yaw_relative_angle);
   // chassis_follow_wz_pid.calc(0.0f, 0);
   chassis_speed.wz = -chassis_follow_wz_pid.out;
@@ -374,7 +379,7 @@ void Pmax_get()
     //剩余能量不足时限制最大功率为80W
     if (!key_cap) {
       if (pm02.robot_status.chassis_power_limit > 80.0f) {
-        infact_Pmax = 80.0f;
+        infact_Pmax = 120.0f;
       }
       else {
         infact_Pmax = pm02.robot_status.chassis_power_limit;

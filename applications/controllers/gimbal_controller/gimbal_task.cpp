@@ -53,6 +53,9 @@ static bool last_key_move_y_down = false;
 static bool last_key_move_x_up = false;
 static bool last_key_move_x_down = false;
 
+bool is_chassis_inverted = false;  // 底盘速度反向标志位
+
+
 //云台初始化
 void gimbal_init();
 //云台状态选择
@@ -302,12 +305,12 @@ void gimbal_mode_control()
       if (key_r && !last_key_r) {
         if (Gimbal_Mode == GIMBAL_LOB) {
           // 从 GIMBAL_LOB 进入 GIMBAL_LOB_CODE
-          
+
           // 记录进入 LOB_CODE 时的当前电机实际角度
-         
+
           Last_Gimbal_Mode = Gimbal_Mode;
           Gimbal_Mode = GIMBAL_LOB_CODE;
-           lob_code_yaw_target = yaw_motor.angle;
+          lob_code_yaw_target = yaw_motor.angle;
           lob_code_pitch_target = pitch_motor.angle;
         }
         else if (Gimbal_Mode == GIMBAL_LOB_CODE) {
@@ -385,6 +388,10 @@ void gimbal_cmd()
       //按下X回头
       if (key_yaw_180 && turnover_cold_time == 0) {
         yaw_target_angle += sp::SP_PI;
+        yaw_offecd_ecd_angle = sp::limit_angle(yaw_offecd_ecd_angle - sp::SP_PI);
+        if(is_chassis_inverted==false)is_chassis_inverted = true;
+        else is_chassis_inverted = false;
+       
         turnover_cold_time = TURNOVER_COLDTIME;
       }
       //pitch轴限角
