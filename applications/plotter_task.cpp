@@ -31,7 +31,10 @@ extern "C" void Plotter_Task()
       // yaw_target_angle,imu.yaw
       // yaw_motor.angle,pitch_motor.angle,remote.keys.r
       // -fric_motor1.speed,-fric_motor2.speed,fric_motor3.speed,-fric_motor4.speed,-fric_motor5.speed,fric_motor6.speed,pm02.shoot.initial_speed,trigger_target_angle,trigger_motor.angle
-      lob_code_pitch_target,pitch_motor.angle,remote.keys.r
+      // lob_code_pitch_target,pitch_motor.angle,remote.keys.r
+      // yaw_target_angle,imu.yaw,yaw_pos_pid.out,yaw_pos_pid.data.pout,yaw_pos_pid.data.iout,yaw_pos_pid.data.dout
+      // chassis.wz
+      lob_code_yaw_target, yaw_motor.angle, remote.keys.r
     );
 
     osDelay(10);

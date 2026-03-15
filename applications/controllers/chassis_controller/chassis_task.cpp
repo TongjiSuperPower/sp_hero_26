@@ -4,9 +4,10 @@
 #include <iostream>
 
 #include "cmsis_os.h"
+#include "controllers/gimbal_controller/gimbal_task.hpp"
 #include "controllers/mode.hpp"
 #include "data_interfaces/uart/uart_task.hpp"
-#include "controllers/gimbal_controller/gimbal_task.hpp"
+#include "io/imu_task.hpp"
 #include "power_control.hpp"
 #include "tools/math_tools/math_tools.hpp"
 #include "tools/mecanum/mecanum.hpp"
@@ -51,12 +52,15 @@ float infact_Pmax = 0.0f;
 float energy_sum = 0.0f;
 //滤波后底盘速度
 float chassis_wz_filter = 0.0f;
+//按下X正在转头
+static bool turning_around = false;
 
 //底盘模式选择
 void chassis_mode_control();
 //chassis_follow,spin下的遥控器/键鼠对应速度
 void remote_speedcontrol_follow();
 void keyboard_speedcontrol_follow(bool key);
+void keyboard_speedcontrol_follow_x(bool key);
 void keyboard_speedcontrol_spin();
 //chassis_follow通用坐标系变至云台系+底盘跟随的函数
 void chassis_coordinate_converter(Chassis_Speed * chassis_speed_given, float yaw_angle);
@@ -110,6 +114,7 @@ extern "C" void Chassis_Task()
         remote_speedcontrol_follow();
       }
       //键鼠模式
+
       if (Global_Mode == KEYBOARD) {
         keyboard_speedcontrol_follow(key_cap);
       }
@@ -138,7 +143,7 @@ extern "C" void Chassis_Task()
       chassis_speed.vx = -chassis_speed.vx;
       chassis_speed.vy = -chassis_speed.vy;
     }
-    chassis_coordinate_converter(&chassis_speed, yaw_relative_angle);
+    //chassis_coordinate_converter(&chassis_speed, yaw_relative_angle);
     chassis.calc(chassis_speed.vx, chassis_speed.vy, chassis_speed.wz);
     wheel_speed.lf = wheel_lf.speed;
     wheel_speed.lr = wheel_lr.speed;
@@ -189,6 +194,7 @@ void chassis_mode_control()
     }
 
     //键鼠模式
+
     if (Global_Mode == KEYBOARD) {
       //不在小陀螺模式时，底盘进入跟随模式
       if (!key_spin) {
@@ -292,12 +298,26 @@ void keyboard_speedcontrol_follow(bool key)
   //平滑控制底盘跟随，解决启停扭动问题
   yaw_relative_angle_filter.update(yaw_relative_angle);
   yaw_relative_angle = yaw_relative_angle_filter.out;
-  
-  chassis_follow_wz_pid.calc(0.0f, yaw_relative_angle);
-  // chassis_follow_wz_pid.calc(0.0f, 0);
-  chassis_speed.wz = -chassis_follow_wz_pid.out;
-  chassis_follow_wz_filter.update(chassis_speed.wz);
-  chassis_speed.wz = chassis_follow_wz_filter.out;
+  static bool last_key_x = false;
+  // x键上升沿触发转头标志
+  if (key_yaw_180 && !last_key_x) {
+    turning_around = true;
+  }
+  last_key_x = key_yaw_180;
+  // 当 yaw 相对角度足够小，退出转头状态
+  if (fabs(yaw_relative_angle) < 0.04f) {
+    turning_around = false;
+  }
+
+  if (turning_around) {
+    chassis_speed.wz = 0.0f;
+  }
+  else {
+    chassis_follow_wz_pid.calc(0.0f, yaw_relative_angle);
+    chassis_speed.wz = -chassis_follow_wz_pid.out;
+    chassis_follow_wz_filter.update(chassis_speed.wz);
+    chassis_speed.wz = chassis_follow_wz_filter.out;
+  }
 }
 
 //chassis_spin下的键鼠对应速度
@@ -328,6 +348,7 @@ void keyboard_speedcontrol_spin(void)
   chassis_speed.vx = chassis_spin_vx_filter.out;
   chassis_spin_vy_filter.update(vy);
   chassis_speed.vy = chassis_spin_vy_filter.out;
+  chassis_coordinate_converter(&chassis_speed, yaw_relative_angle);
 
   // // 死区
   // if (fabs(chassis_speed.vx) < 1e-6) {

@@ -21,6 +21,7 @@ typedef enum
   CHASSIS_SPIN,
   CHASSIS_FOLLOW,
   CHASSIS_LOB,
+  CHASSIS_X,
 } chassis_mode;
 
 //云台状态机参数

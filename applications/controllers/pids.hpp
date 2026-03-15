@@ -47,15 +47,15 @@ inline sp::PID yaw_speed_lob_pid(
 inline sp::PID pitch_pos_lob_pid(T_CONTROL, 80.0f, 400.0f, 10.0f, 6, 5.4, 1.0f, true, false);
 inline sp::PID pitch_speed_lob_pid(
   T_CONTROL, 0.35f, 0.0f, 0.0f, MAX_XIAOMI_TORQUE, 0.2, 1.0f, false, false);  //0.6
-inline sp::PID pitch_pos_code_pid(T_CONTROL, 110.0f, 160.0f, 0.0f, 10.0f, 5.4, 1.0f, true, false);
+inline sp::PID pitch_pos_code_pid(T_CONTROL, 160.0f, 180.0f, 0.0f, 10.0f, 6.0, 1.0f, true, false);
 inline sp::PID pitch_speed_code_pid(
-  T_CONTROL, 0.67f, 0.0f, 0.0f, MAX_XIAOMI_TORQUE, 0.2, 1.0f, false, false);
+  T_CONTROL, 0.68f, 0.0f, 0.0f, MAX_XIAOMI_TORQUE, 0.2, 1.0f, false, false);
 //   inline sp::PID pitch_pos_code_pid(T_CONTROL, 100.0f, 120.0f, 0.0f, 6, 5.4, 1.0f, true, false);
 // inline sp::PID pitch_speed_code_pid(
 //   T_CONTROL, 0.65f, 0.0f, 0.0f, MAX_XIAOMI_TORQUE, 0.2, 1.0f, false, false);             //0.6
-inline sp::PID yaw_pos_code_pid(T_CONTROL, 20.0f, 100.0f, 0.0f, 7, 3, 1.0f, true, false);  //
+inline sp::PID yaw_pos_code_pid(T_CONTROL, 35.0f, 120.0f, 0.0f, 7, 3, 1.0f, true, false);  //
 inline sp::PID yaw_speed_code_pid(
-  T_CONTROL, 2.0f, 0.0f, 0.0f, MAX_4310_TORQUE, MAX_4310_TORQUE / 3.0f, 1.0f, false, false);
+  T_CONTROL, 2.1f, 0.0f, 0.0f, MAX_4310_TORQUE, MAX_4310_TORQUE / 3.0f, 1.0f, false, false);
 #ifdef MPC
 inline sp::PID yaw_vel_pid(1e-3f, 1, 0, 0, 100, 0, 1.0f, true, false);
 // inline sp::PID yaw_acc_pid(1e-3f, 1800, 2800, 200, 100, 80, 1.0f, true, false);
@@ -77,15 +77,17 @@ constexpr float TRIGGER_MAX_TORQUE = 1.8f;       // N.m
 
 #ifdef HERO_DOG
 //单发外环PID
-inline sp::PID trigger_pos_pid1(T_CONTROL, 22.0f, 15.0f, 0.0f, 10, 0.5, 0.5f, true, true);
+//单发外环PID
+// inline sp::PID trigger_pos_pid1(T_CONTROL, 22.0f, 15.0f, 0.0f, 10, 0.5, 0.5f, true, true);
+//单发内环PID
+// inline sp::PID trigger_speed_pid2(
+  // T_CONTROL, 1.6f, 0.0f, 0.0025f, MAX_4310_TORQUE, MAX_4310_TORQUE / 3.0f, 1, false, true);
+//lob
+inline sp::PID trigger_pos_pid1(T_CONTROL, 6.0f, 15.0f, 0.0f, 10, 0.5, 0.5f, true, true);
 //单发内环PID
 inline sp::PID trigger_speed_pid2(
-  T_CONTROL, 1.6f, 0.0f, 0.0025f, MAX_4310_TORQUE, MAX_4310_TORQUE / 3.0f, 1, false, true);
-//lob
-// inline sp::PID trigger_pos_pid1(T_CONTROL, 6.0f, 15.0f, 0.0f, 10, 0.5, 0.5f, true, true);
-// //单发内环PID
-// inline sp::PID trigger_speed_pid2(
-//   T_CONTROL, 1.3f, 0.0f, 0.0025f, MAX_4310_TORQUE, MAX_4310_TORQUE / 3.0f, 1, false, true);
+  T_CONTROL, 1.3f, 0.0f, 0.0025f, MAX_4310_TORQUE, MAX_4310_TORQUE / 3.0f, 1, false, true);
+
 
 //反转外环PID
 inline sp::PID triggerback_pos_pid1(T_CONTROL, 40.05f, 3.5f, 0.1f, 10, 10, 1.0f, true, true);

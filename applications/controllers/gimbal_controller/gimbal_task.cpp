@@ -366,6 +366,7 @@ void gimbal_cmd()
 #endif
     }
     //键鼠
+    
     if (Global_Mode == KEYBOARD) {
       //陀螺仪控云台
       gyro_yaw_angle_add = -mouse_yaw * MOUSE_DPI;
@@ -387,9 +388,9 @@ void gimbal_cmd()
       }
       //按下X回头
       if (key_yaw_180 && turnover_cold_time == 0) {
-        yaw_target_angle += sp::SP_PI;
+        yaw_target_angle = sp::limit_angle(yaw_target_angle + sp::SP_PI);
         yaw_offecd_ecd_angle = sp::limit_angle(yaw_offecd_ecd_angle - sp::SP_PI);
-        if(is_chassis_inverted==false)is_chassis_inverted = true;
+        if(is_chassis_inverted==false) is_chassis_inverted = true;
         else is_chassis_inverted = false;
        
         turnover_cold_time = TURNOVER_COLDTIME;
